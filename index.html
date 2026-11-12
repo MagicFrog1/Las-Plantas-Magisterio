@@ -241,6 +241,13 @@ body.hc .say .bub{background:#fff;border-color:#000}
 body.hc .nav,body.hc .listen,body.hc .help,body.hc .wbtn,body.hc .picto,body.hc .dot,body.hc .home,body.hc .icon-btn,body.hc .card,body.hc .how{outline:3px solid #000;outline-offset:0}
 body.hc .panel p b{background:#FFE000}
 body.calm *,body.calm *::before{animation:none!important;transition:none!important}
+body.talking .nav,body.talking .dot,body.talking .listen,body.talking .help,body.talking .picto,body.talking .wbtn,body.talking .bigstart,body.talking .card{pointer-events:none;opacity:.45;filter:saturate(.5);animation:none}
+.talk{display:none;align-items:center;gap:10px;font-family:'Baloo 2',system-ui,sans-serif;font-weight:700;font-size:18px;color:#8C2F55;background:#FFE3EC;border-radius:999px;padding:6px 16px 4px 12px;width:max-content}
+body.talking .talk{display:inline-flex}
+.talk i{display:inline-block;width:5px;height:18px;border-radius:3px;background:#FF7FA8;animation:eq .8s ease-in-out infinite}
+.talk i:nth-child(2){animation-delay:.15s}.talk i:nth-child(3){animation-delay:.3s}
+@keyframes eq{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+
 
 @media (max-width:900px),(orientation:portrait){
   main{grid-template-columns:1fr;grid-template-rows:auto 1fr}
@@ -318,7 +325,7 @@ body.calm *,body.calm *::before{animation:none!important;transition:none!importa
           <li>Las partes de la planta: raíz, tallo, hojas, flor y fruto.</li>
           <li>Que las plantas necesitan sol, agua, aire y tierra.</li>
           <li>Cómo les afecta el tiempo: sol, lluvia, frío y calor.</li>
-          <li>Que las abejas llevan el polen y que la flor se convierte en fruto.</li>
+          <li>Que las abejas llevan el polen de un manzano a otro y que la flor se convierte en fruto.</li>
           <li>Que hay plantas y árboles que nos dan frutos, y que cada fruto guarda semillas.</li>
           <li>El ciclo de la vida: nacer, crecer, dar frutos y volver a empezar.</li>
         </ul>
@@ -366,6 +373,7 @@ body.calm *,body.calm *::before{animation:none!important;transition:none!importa
       <p id="text"></p>
       <div class="pictos" id="pictos"></div>
       <div class="row"><button class="listen" id="listen">Escuchar</button><button class="help" id="helpBtn">Ayuda</button></div>
+      <div class="talk" id="talk" role="status"><span><i></i> <i></i> <i></i></span>Escucha a Semi…</div>
       <div class="status" id="status"></div>
       <div class="say" id="say" hidden><div class="av" id="sayAv"></div><div class="bub" id="sayTxt"></div></div>
     </section>
@@ -443,30 +451,30 @@ const FEMALE=/helena|elvira|laura|luc[ií]a|m[oó]nica|paulina|sabina|dalia|espe
 function pickVoice(){try{const vs=speechSynthesis.getVoices().filter(v=>/^es/i.test(v.lang));
   voice=vs.find(v=>/es[-_]ES/i.test(v.lang)&&FEMALE.test(v.name))||vs.find(v=>FEMALE.test(v.name))||vs.find(v=>/es[-_]ES/i.test(v.lang))||vs[0]||null;}catch(e){}}
 if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice;}
-function stopSpeech(){speakId++;try{speechSynthesis.cancel();}catch(e){}if(curAudio){try{curAudio.pause();}catch(e){}curAudio=null;}}
+const speechQ=[];let talking=false;
+function setTalking(v){talking=v;document.body.classList.toggle('talking',v);}
+function stopSpeech(){speakId++;speechQ.length=0;setTalking(false);try{speechSynthesis.cancel();}catch(e){}if(curAudio){try{curAudio.pause();}catch(e){}curAudio=null;}}
 function speak(text,onend){
-  const id=++speakId;
-  const fallback=()=>{if(onend)setTimeout(()=>{if(id===speakId)onend();},Math.max(1800,text.length*60));};
-  if(!soundOn){fallback();return;}
-  try{speechSynthesis.cancel();}catch(e){}
-  if(curAudio){try{curAudio.pause();}catch(e){}curAudio=null;}
+  if(!soundOn){if(onend)setTimeout(onend,Math.max(1800,text.length*60));return;}
+  if(talking){speechQ.push({text,onend});if(speechQ.length>3)speechQ.shift();return;}
+  const id=++speakId;setTalking(true);
+  let done=false;const finish=()=>{if(done||id!==speakId)return;done=true;clearTimeout(guard);curAudio=null;setTalking(false);onend&&onend();const n=speechQ.shift();if(n)speak(n.text,n.onend);};
+  const guard=setTimeout(finish,Math.max(5000,text.length*120)+2500);
   const src=AUDIO[norm(text)];
   if(src){
-    const a=new Audio(src);a.playbackRate=SET.slow?.84:1;curAudio=a;let fired=false;
-    const f=()=>{if(!fired&&id===speakId){fired=true;onend&&onend();}};
-    a.onended=f;a.onerror=()=>{if(id===speakId){curAudio=null;tts();}};
-    const p=a.play();if(p&&p.catch)p.catch(()=>{if(id===speakId)tts();});
+    const a=new Audio(src);a.playbackRate=SET.slow?.84:1;curAudio=a;
+    a.onended=finish;a.onerror=()=>{if(id===speakId&&!done){curAudio=null;tts();}};
+    const pr=a.play();if(pr&&pr.catch)pr.catch(()=>{if(id===speakId&&!done)tts();});
     return;
   }
   tts();
   function tts(){
-    if(!('speechSynthesis' in window)){fallback();return;}
+    if(!('speechSynthesis' in window)){setTimeout(finish,Math.max(1800,text.length*60));return;}
     try{speechSynthesis.cancel();
       setTimeout(()=>{if(id!==speakId)return;
         const u=new SpeechSynthesisUtterance(clean(text));u.lang='es-ES';if(voice)u.voice=voice;u.rate=SET.slow?.74:.92;u.pitch=1.2;
-        let fired=false;const f=()=>{if(!fired&&id===speakId){fired=true;onend&&onend();}};
-        u.onend=f;u.onerror=f;speechSynthesis.speak(u);},70);
-    }catch(e){fallback();}
+        u.onend=finish;u.onerror=finish;speechSynthesis.speak(u);},70);
+    }catch(e){setTimeout(finish,1800);}
   }
 }
 
@@ -914,19 +922,19 @@ function sceneSeed(sc,ctx){
 
 /* 2 · Las raíces (arrastrar hasta el agua) */
 function sceneRoots(sc,ctx){
-  const svg=newSvg(sc);const gy=200;scenery(svg,{gy,cut:true});
-  [[350,300,34,22],[690,505,44,26],[130,565,38,22],[900,560,30,20],[300,505,24,16]].forEach(([cx,cy,rx,ry])=>{el('ellipse',{cx,cy:cy+4,rx,ry,fill:'#3E2410',opacity:.25},svg);el('ellipse',{cx,cy,rx,ry,fill:'#A3ABB4',stroke:'#6C757D','stroke-width':2.5},svg);el('ellipse',{cx:cx-rx*.3,cy:cy-ry*.35,rx:rx*.3,ry:ry*.2,fill:'#fff',opacity:.4},svg);if(rx>=38)drawFace(svg,cx,cy+3,.62,'sleep');});
-  const pockets=[{x:185,y:430},{x:825,y:375},{x:565,y:552}].map(p=>{const o=el('g',{transform:`translate(${p.x},${p.y})`},svg);const i=el('g',{class:'pulse'},o);
+  const svg=newSvg(sc);const gy=250;scenery(svg,{gy,cut:true});
+  [[340,345,34,22],[700,520,44,26],[120,580,38,22],[910,585,30,20],[320,535,24,16]].forEach(([cx,cy,rx,ry])=>{el('ellipse',{cx,cy:cy+4,rx,ry,fill:'#3E2410',opacity:.25},svg);el('ellipse',{cx,cy,rx,ry,fill:'#A3ABB4',stroke:'#6C757D','stroke-width':2.5},svg);el('ellipse',{cx:cx-rx*.3,cy:cy-ry*.35,rx:rx*.3,ry:ry*.2,fill:'#fff',opacity:.4},svg);if(rx>=38)drawFace(svg,cx,cy+3,.62,'sleep');});
+  const pockets=[{x:180,y:455},{x:830,y:420},{x:560,y:565}].map(p=>{const o=el('g',{transform:`translate(${p.x},${p.y})`},svg);const i=el('g',{class:'pulse'},o);
     el('ellipse',{rx:66,ry:40,fill:'#3E2410',opacity:.2,cy:6},i);el('path',{d:'M-62,6 C-62,-26 -30,-38 0,-38 C34,-38 64,-24 64,4 C64,30 32,40 0,40 C-32,40 -62,32 -62,6Z',fill:'url(#gWater)',stroke:'#2D8FDB','stroke-width':3},i);
     el('ellipse',{cx:-26,cy:-18,rx:16,ry:6,fill:'#fff',opacity:.75,transform:'rotate(-12 -26 -18)'},i);el('circle',{cx:30,cy:-20,r:4,fill:'#fff',opacity:.7},i);drawFace(i,4,8,1.15,'happy');
     return{...p,o,i,got:false};});
   const rootsG=el('g',{},svg);const hairG=el('g',{},svg);
-  const P=drawPlant(svg,{x:500,gy,h:84,n:2,ls:.5});
+  const P=drawPlant(svg,{x:500,gy,h:70,n:2,ls:.46});
   drawSemi(svg,500,gy+36,.78,'happy',{sprout:false});
   const S={x:500,y:gy+64};
   const handle=el('g',{'pointer-events':'none'},svg);const hi=el('g',{class:'pulse'},handle);
   el('circle',{r:26,fill:'#ffffff40',stroke:'#fff','stroke-width':4,'stroke-dasharray':'7 6'},hi);el('circle',{r:11,fill:'#FFD23F',stroke:'#fff','stroke-width':3},hi);
-  let hand=handHint(svg,620,330,'¡Arrastra la raíz!');
+  let hand=handHint(svg,640,390,'¡Arrastra la raíz!');
   let pts,outer,inner,tip,count=0,busy=false,drag=false,since=0,hs=1;
   function newBranch(){pts=[{...S}];tip={...S};since=0;
     outer=el('path',{stroke:'#B5864F','stroke-width':13,fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},rootsG);
@@ -950,12 +958,12 @@ function sceneRoots(sc,ctx){
     w.got=true;drag=false;busy=true;count++;ctx.status('drop',count,3);sfx.gulp();
     w.i.classList.remove('pulse');w.i.style.transformBox='fill-box';w.i.style.transformOrigin='center';w.i.style.transition='transform 1s, opacity 1s';
     requestAnimationFrame(()=>{w.i.style.transform='scale(.2)';w.i.style.opacity='.15';});
-    const path=[...pts].reverse().concat([{x:500,y:gy},{x:500,y:gy-80*(1+(count-1)*.4)}]);
+    const path=[...pts].reverse().concat([{x:500,y:gy},{x:500,y:gy-70*(1+(count-1)*.25)}]);
     let arrived=0;
     for(let k=0;k<6;k++)ctx.after(k*110,()=>{const c=el('circle',{r:8,fill:'#5DB8F5',stroke:'#fff','stroke-width':2},svg);
       along(ctx,path,750,p=>{c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);},()=>{c.remove();if(++arrived===6)grow();});});
     function grow(){
-      P.outer.style.transform=`scale(${1+count*.42})`;sfx.good();
+      P.outer.style.transform=`scale(${1+count*.27})`;sfx.good();
       if(count<3){ctx.say(count===1?'¡Glu, glu! ¡Qué rica el agua! Ahora busca otra gota.':'¡Muy bien! Ya solo queda una.');newBranch();busy=false;}
       else{handle.remove();ctx.done('¡Genial! Las raíces han encontrado el agua y la planta ha crecido. Además, las raíces la sujetan para que el viento no se la lleve.');}
     }
@@ -969,9 +977,9 @@ function sceneParts(sc,ctx){
   const roots=drawRoots(svg,tx,gy,140);
   el('rect',{x:tx-150,y:gy+4,width:300,height:160,fill:'transparent'},roots);roots.insertBefore(roots.lastChild,roots.firstChild);
   const T=drawTree(svg,{x:tx,gy,s,seed:21});
-  const right=T.spots.filter(q=>q.x>tx+10).sort((a,b)=>a.y-b.y);
-  const blos=[right[0],right[2]].filter(Boolean).map(q=>drawBlossom(svg,q.x,q.y,1.15));
-  const apps=[right[1],right[3]].filter(Boolean).map(q=>drawApple(svg,q.x,q.y+10,.95));
+  const fq=T.toWorld({x:62,y:-332}),aq=T.toWorld({x:112,y:-222});
+  const blos=[drawBlossom(svg,fq.x,fq.y,1.35)];
+  const apps=[drawApple(svg,aq.x,aq.y,1.05)];
   const fl=el('g',{},svg);blos.forEach(b=>fl.appendChild(b.o));const fr=el('g',{},svg);apps.forEach(a=>fr.appendChild(a.o));
   const tagsG=el('g',{'pointer-events':'none'},svg);const badgeG=el('g',{'pointer-events':'none'},svg);
   const leafAnchor=T.toWorld({x:-95,y:-265});
@@ -979,8 +987,8 @@ function sceneParts(sc,ctx){
     {k:'raiz',name:'Raíz',the:'la raíz',nodes:[roots],anchor:{x:tx,y:gy+92},tag:{x:740,y:550},txt:'Las RAÍCES están escondidas debajo de la tierra. Beben agua y sujetan la planta para que no se caiga.'},
     {k:'tallo',name:'Tallo (tronco)',the:'el tallo',nodes:[T.trunk],anchor:{x:tx+2,y:gy-70},tag:{x:740,y:420},txt:'El TALLO es como un ascensor: sube el agua desde las raíces hasta las hojas. ¡Y mantiene la planta de pie!'},
     {k:'hojas',name:'Hojas',the:'las hojas',nodes:[T.canopy],anchor:leafAnchor,tag:{x:160,y:130},txt:'Las HOJAS atrapan la luz del sol para fabricar la comida de la planta. ¡Son su cocina!'},
-    {k:'flor',name:'Flor',the:'la flor',nodes:[fl],anchor:{x:blos[0].o.transform.baseVal[0].matrix.e,y:blos[0].o.transform.baseVal[0].matrix.f},tag:{x:810,y:120},txt:'La FLOR es la parte más bonita. Con sus colores llama a las abejas, y de ella nace el fruto.'},
-    {k:'fruto',name:'Fruto',the:'el fruto',nodes:[fr],anchor:{x:apps[0].o.transform.baseVal[0].matrix.e,y:apps[0].o.transform.baseVal[0].matrix.f},tag:{x:830,y:290},txt:'El FRUTO guarda dentro las semillas. ¡Algunos nos los comemos, como la manzana!'}
+    {k:'flor',name:'Flor',the:'la flor',nodes:[fl],anchor:{x:blos[0].o.transform.baseVal[0].matrix.e,y:blos[0].o.transform.baseVal[0].matrix.f},tag:{x:800,y:110},txt:'La FLOR es la parte más bonita. Con sus colores llama a las abejas, y de ella nace el fruto.'},
+    {k:'fruto',name:'Fruto',the:'el fruto',nodes:[fr],anchor:{x:apps[0].o.transform.baseVal[0].matrix.e,y:apps[0].o.transform.baseVal[0].matrix.f},tag:{x:820,y:280},txt:'El FRUTO guarda dentro las semillas. ¡Algunos nos los comemos, como la manzana!'}
   ];
   const byK={};parts.forEach(p=>{byK[p.k]=p;
     const b=el('g',{transform:`translate(${p.anchor.x},${p.anchor.y})`},badgeG);const bi=el('g',{class:'pulse'},b);
@@ -1129,41 +1137,50 @@ function sceneGrow(sc,ctx){
   });
 }
 
-/* 7 · La flor y la abeja (polinización en el manzano) */
+/* 7 · La flor y la abeja (polinización entre dos manzanos) */
 function sceneBee(sc,ctx){
-  const svg=newSvg(sc);const gy=530;scenery(svg,{gy,clouds:false});cloudShape(svg,330,52,.75,'drift1');
-  const hive=el('g',{transform:'translate(80,88)'},svg);el('path',{d:'M-100,-110 Q0,-62 100,-122',stroke:'#7A4A1F','stroke-width':12,fill:'none','stroke-linecap':'round'},hive);
+  const svg=newSvg(sc);const gy=540;scenery(svg,{gy,clouds:false});cloudShape(svg,430,46,.7,'drift1');
+  const hive=el('g',{transform:'translate(70,88)'},svg);el('path',{d:'M-100,-110 Q0,-62 100,-122',stroke:'#7A4A1F','stroke-width':12,fill:'none','stroke-linecap':'round'},hive);
   leaf(hive,{x:40,y:-92,a:-40,s:.35});leaf(hive,{x:-50,y:-86,a:-140,s:.3,dark:true});
   el('line',{x1:0,y1:-80,x2:0,y2:-44,stroke:'#7A4A1F','stroke-width':5},hive);
   [[-30,30],[-8,44],[16,50],[40,42],[60,28]].forEach(([y,rx])=>el('ellipse',{cx:0,cy:y,rx,ry:14,fill:'url(#gBee)',stroke:'#C98A00','stroke-width':3},hive));el('ellipse',{cx:0,cy:30,rx:11,ry:9,fill:'#5A3A12'},hive);
-  const T=drawTree(svg,{x:560,gy,s:1.12,seed:7});
-  const spots=T.spots.filter((q,i)=>i<12).sort((a,b)=>a.x-b.x).filter((q,i)=>i%2===0).slice(0,6);
-  const flowers=spots.map(q=>{const b=drawBlossom(svg,q.x,q.y,1.25);b.inner.classList.add('nod');return{x:q.x,y:q.y,b,done:false};});
+  const TA=drawTree(svg,{x:330,gy,s:.8,seed:7}),TB=drawTree(svg,{x:780,gy,s:.8,seed:13});
+  [[TA,'Manzano 1'],[TB,'Manzano 2']].forEach(([T,n])=>{const g=el('g',{transform:`translate(${T.x},${gy+38})`},svg);el('rect',{x:-70,y:-20,width:140,height:38,rx:12,fill:'#fff',stroke:'#F6C9D8','stroke-width':3,filter:'url(#soft)'},g);const t=el('text',{y:8,'text-anchor':'middle','font-size':22,'font-weight':800,fill:'#5B3A2E'},g);t.textContent=n;});
+  const LOC=[{x:-78,y:-292},{x:12,y:-338},{x:86,y:-262}];
+  const flowers=[];[[TA,'A'],[TB,'B']].forEach(([T,k])=>LOC.forEach(q=>{const w=T.toWorld(q);const b=drawBlossom(svg,w.x,w.y,1.2);b.inner.classList.add('nod');flowers.push({x:w.x,y:w.y,b,tree:k,done:false});}));
   const trailG=el('g',{'pointer-events':'none'},svg);const fxG=el('g',{'pointer-events':'none'},svg);
-  const bee=makeBee(svg,1.1);bee.pollen.setAttribute('opacity',1);
-  let pos={x:120,y:200},target={x:200,y:240},dir=1,count=0,trailAcc=0;const trail=[];
-  let hand=handHint(svg,230,290,'¡Guía a la abeja!');
+  const bee=makeBee(svg,1.05);bee.pollen.setAttribute('opacity',0);
+  let pos={x:560,y:130},target={x:560,y:160},dir=1,count=0,trailAcc=0,near=null,warnT=0,first=true;const carried=new Set();const canPol=q=>!q.done&&[...carried].some(t=>t!==q.tree);const trail=[];
+  let hand=handHint(svg,560,250,'¡Guía a la abeja!');
   const setT=e=>{target=pt(svg,e);target.x=clamp(target.x,20,W-20);target.y=clamp(target.y,20,H-20);};
   svg.addEventListener('pointerdown',e=>{setT(e);if(hand){hand.remove();hand=null;}});
   svg.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'||e.buttons||e.pressure>0){setT(e);if(hand&&dist(target,pos)>40){hand.remove();hand=null;}}});
   ctx.status('flower',0,flowers.length);
-  ctx.hint=()=>{const f=flowers.find(q=>!q.done);if(f)ghostMove(ctx,svg,pos,f);};
+  ctx.hint=()=>{const f=flowers.find(canPol)||flowers.find(q=>!carried.has(q.tree))||flowers.find(q=>!q.done);if(f)ghostMove(ctx,svg,pos,f);};
   ctx.loop((dt,t)=>{
     const k=Math.min(1,dt*3.4);const nx=pos.x+(target.x-pos.x)*k,ny=pos.y+(target.y-pos.y)*k;const vx=nx-pos.x,vy=ny-pos.y;
     if(Math.abs(vx)>.4)dir=vx<0?-1:1;pos={x:nx,y:ny};bee.place(pos.x,pos.y+Math.sin(t*7)*4,dir,clamp(vy*1.4,-14,14)*dir);
-    trailAcc+=dt;if(trailAcc>.06&&Math.hypot(vx,vy)>.6){trailAcc=0;trail.push({el:el('circle',{r:rand(2.5,4.5),fill:'#FFC94A'},trailG),x:pos.x-dir*20,y:pos.y+20,life:0});}
+    trailAcc+=dt;if(carried.size&&trailAcc>.06&&Math.hypot(vx,vy)>.6){trailAcc=0;trail.push({el:el('circle',{r:rand(2.5,4.5),fill:'#FFC94A'},trailG),x:pos.x-dir*20,y:pos.y+20,life:0});}
     for(let i=trail.length-1;i>=0;i--){const p=trail[i];p.life+=dt;p.y+=22*dt;p.el.setAttribute('cx',p.x);p.el.setAttribute('cy',p.y);p.el.setAttribute('opacity',Math.max(0,1-p.life));if(p.life>1){p.el.remove();trail.splice(i,1);}}
-    for(const f of flowers)if(!f.done&&dist(pos,f)<48)pollinate(f);
+    const f=flowers.find(q=>dist(pos,q)<46)||null;
+    if(f&&f!==near)visit(f);near=f;
   });
+  function visit(f){
+    if(canPol(f))pollinate(f);
+    else if(!f.done&&carried.size&&performance.now()-warnT>7000){warnT=performance.now();ctx.say('Este polen es de este mismo manzano. ¡Llévalo al otro árbol!');}
+    if(!carried.has(f.tree)){carried.add(f.tree);bee.pollen.setAttribute('opacity',1);sfx.tap();restart(f.b.inner,'wiggle');
+      if(first){first=false;ctx.say('¡La abeja ha cogido polen! Ahora llévalo a las flores del otro manzano.');}}
+  }
   function pollinate(f){
     f.done=true;count++;ctx.status('flower',count,flowers.length);sfx.good();sparkBurst(ctx,fxG,f.x,f.y);
     const b=el('g',{transform:`translate(${f.x},${f.y-56})`},fxG);const bi=el('g',{class:'popin'},b);el('circle',{r:18,fill:'#fff',filter:'url(#soft)'},bi);
     el('path',{d:HEART_D,fill:'#FF7FA8',stroke:'#D9416F','stroke-width':2.5,transform:'scale(.62)'},bi);drawFace(f.b.inner,0,1,.4,'joy');
     f.b.center.querySelector('circle').setAttribute('fill','#FFB627');
+    const n=flowers.length;
     if(count===1)ctx.say('¡Bien! La abeja ha dejado polen en la flor y se ha llevado un poquito más. ¡Vamos a otra flor!');
-    else if(count===flowers.length-2)ctx.say('¡Genial!');
-    else if(count===flowers.length-1)ctx.say('¡Ya casi está!');
-    else if(count<flowers.length)ctx.say('¡Otra más!');
+    else if(count===n-2)ctx.say('¡Genial!');
+    else if(count===n-1)ctx.say('¡Ya casi está!');
+    else if(count<n)ctx.say('¡Otra más!');
     else ctx.after(600,()=>ctx.done('¡Bravo! La abeja ha polinizado todas las flores. Ahora las flores podrán convertirse en frutos con semillas dentro.'));
   }
 }
@@ -1294,8 +1311,8 @@ function sceneCycle(sc,ctx){
   const ang=i=>(-90+i*60)*Math.PI/180;const P=a=>({x:C.x+RX*Math.cos(a),y:C.y+RY*Math.sin(a)});
   for(let i=0;i<6;i++){const a0=ang(i)+.33,a1=ang(i+1)-.33;let d='';for(let k=0;k<=16;k++){const p=P(a0+(a1-a0)*k/16);d+=(k?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1);}
     el('path',{d,stroke:'#3E9B4A','stroke-width':7,fill:'none','stroke-linecap':'round','stroke-dasharray':'2 14',class:'flow','marker-end':'url(#arrow)'},svg);}
-  const mid=el('g',{transform:`translate(${C.x},${C.y-14})`},svg);const sd=drawSemi(mid,0,0,1.4,'happy');sd.g.classList.add('bob');
-  const mt=el('text',{y:82,'text-anchor':'middle','font-size':26,'font-weight':800,fill:'#1E5A36'},mid);mt.textContent='¡Y vuelta a empezar!';
+  const mid=el('g',{transform:`translate(${C.x},${C.y+6})`},svg);const sd=drawSemi(mid,0,0,1.1,'happy');sd.g.classList.add('bob');
+  const mt=el('text',{y:74,'text-anchor':'middle','font-size':25,'font-weight':800,fill:'#1E5A36'},mid);mt.textContent='¡Y vuelta a empezar!';
   const visited=new Set();ctx.status('cycle',0,6);
   ctx.hint=()=>{const i=[0,1,2,3,4,5].find(q=>!visited.has(q));if(i!==undefined){const p=P(ang(i));ghostTap(ctx,svg,p.x,p.y);}};
   const nodes=stages.map((s,i)=>{const p=P(ang(i));const o=el('g',{transform:`translate(${p.x},${p.y})`},svg);const g=el('g',{class:'tappable'},o);
@@ -1382,8 +1399,8 @@ const slides=[
    text:'Las plantas notan el **tiempo** que hace. Les gusta el **sol** y la **lluvia**, pero no el **frío** ni el **calor** muy fuertes. Pulsa los botones y mira cómo se siente.'},
   {icon:'tree',step:'Paso 6 de 11',title:'De plantita a manzano',build:sceneGrow,how:'tap',pictos:[['sprout','plantita'],['sun','sol'],['tree','árbol']],
    text:'Semi es una **pepita de manzana**. Con sol, agua y mucho tiempo, su plantita crece y crece… ¡hasta convertirse en un **árbol**! Toca el sol para que pasen los años.'},
-  {icon:'bee',step:'Paso 7 de 11',title:'La flor y la abeja',build:sceneBee,how:'move',pictos:[['bee','abeja'],['flower','flor'],['pollen','polen']],
-   text:'Cuando la planta es mayor, le salen **flores**. Las **abejas** van de flor en flor llevando un polvito amarillo: el **polen**. ¡Así las flores pueden dar frutos! Guía a la abeja por todas las flores.'},
+  {icon:'bee',step:'Paso 7 de 11',title:'La flor y la abeja',build:sceneBee,how:'move',pictos:[['bee','abeja'],['flower','flor'],['pollen','polen'],['tree','otro manzano']],
+   text:'Cuando el manzano es mayor, le salen **flores**. Las **abejas** llevan un polvito amarillo, el **polen**, de las flores de un manzano a las flores de **otro manzano**. ¡Así las flores pueden dar frutos! Guía a la abeja de un árbol a otro.'},
   {icon:'apple',step:'Paso 8 de 11',title:'Del fruto a la semilla',build:sceneFruit,how:'drag',pictos:[['flower','flor'],['apple','fruto'],['seed','semilla']],
    text:'La **flor** se convierte en un **fruto**, ¡y dentro hay **semillas** nuevas! Ábrelo y entierra las semillas en los agujeros.'},
   {icon:'orange',step:'Paso 9 de 11',title:'¿Qué fruto da cada planta?',build:sceneMatch,how:'drag',pictos:[['apple','manzana'],['orange','naranja'],['tomato','tomate'],['strawberry','fresa']],
@@ -1488,7 +1505,7 @@ $('brand').prepend(semiIcon(40,'happy'));
     ['comer','¿Cómo come?','Le dan sol, agua, aire y tierra, y la planta revive.','1 min'],
     ['clima','El tiempo','Sol, lluvia, nieve o calor: ven cómo reacciona.','1 min'],
     ['crecer','De plantita a manzano','Tocan el sol para que pasen los años.','30 s'],
-    ['abeja','La flor y la abeja','Llevan a la abeja de flor en flor para polinizar.','1 min'],
+    ['abeja','La flor y la abeja','Llevan el polen de las flores de un manzano a las del otro.','1 min'],
     ['fruto','Del fruto a la semilla','La flor se hace manzana; la abren y plantan las pepitas.','1 min'],
     ['frutos','¿Qué fruto da cada planta?','Manzano, naranjo, tomatera y fresal.','1 min'],
     ['ciclo','El ciclo de la vida','Repasan las seis fases en un círculo que no acaba.','1 min'],
