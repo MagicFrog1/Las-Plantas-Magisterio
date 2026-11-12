@@ -605,7 +605,7 @@ body.talking .talk{display:inline-flex}
     <div class="lx-wrap">
       <div class="center" data-rv>
         <h2 class="lx-h">Cada niño aprende a su manera</h2>
-        <p class="lx-sub">Siguiendo el Diseño Universal para el Aprendizaje, cada pantalla se puede ver, escuchar y hacer de varias formas. Pruébalo aquí:</p>
+        <p class="lx-sub">Siguiendo el Diseño Universal para el Aprendizaje, cada pantalla del viaje se puede ver, escuchar y hacer de varias formas. Prueba los botones de la izquierda en esta pantalla de ejemplo, y toca los dibujos para oír cada palabra.</p>
       </div>
       <div class="lx-dua" data-rv>
         <div class="lx-tog" id="lxTog">
@@ -615,7 +615,7 @@ body.talking .talk{display:inline-flex}
           <button data-k="slow" aria-pressed="false"><span data-ic="turtle"></span><span><b>Voz más lenta</b><small>Para seguirla mejor</small></span><span class="sw"></span></button>
         </div>
         <div class="lx-mini" id="lxMini">
-          <div class="st">Paso 2 de 11</div>
+          <div class="st">Pantalla de ejemplo</div>
           <h3>Las raíces</h3>
           <p class="tx">Debajo de la tierra, a Semi le salen <b>raíces</b>. Las raíces buscan <b>agua</b> y sujetan la planta para que no se caiga.</p>
           <div class="pics"><button class="pic" data-w="raíz" data-ic="root">raíz</button><button class="pic" data-w="agua" data-ic="drop">agua</button><button class="pic" data-w="tierra" data-ic="soil">tierra</button></div>
@@ -778,6 +778,9 @@ if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pick
 const speechQ=[];let talking=false;
 function setTalking(v){talking=v;document.body.classList.toggle('talking',v);}
 function stopSpeech(){speakId++;speechQ.length=0;setTalking(false);try{speechSynthesis.cancel();}catch(e){}if(curAudio){try{curAudio.pause();}catch(e){}curAudio=null;}}
+const AUDIO_CACHE={};
+function getAudio(src){let a=AUDIO_CACHE[src];if(!a){a=new Audio(src);a.preload='auto';AUDIO_CACHE[src]=a;}return a;}
+function preload(texts){texts.forEach(t=>{const s=AUDIO[norm(t)];if(s)getAudio(s);});}
 function speak(text,onend){
   if(!soundOn){if(onend)setTimeout(onend,Math.max(1800,text.length*60));return;}
   if(talking){speechQ.push({text,onend});if(speechQ.length>3)speechQ.shift();return;}
@@ -786,7 +789,7 @@ function speak(text,onend){
   const guard=setTimeout(finish,Math.max(5000,text.length*120)+2500);
   const src=AUDIO[norm(text)];
   if(src){
-    const a=new Audio(src);a.playbackRate=SET.slow?.84:1;curAudio=a;
+    const a=getAudio(src);try{a.currentTime=0;}catch(e){}a.playbackRate=SET.slow?.84:1;curAudio=a;
     a.onended=finish;a.onerror=()=>{if(id===speakId&&!done){curAudio=null;tts();}};
     const pr=a.play();if(pr&&pr.catch)pr.catch(()=>{if(id===speakId&&!done)tts();});
     return;
@@ -1753,6 +1756,7 @@ function go(i){
   stopSpeech();if(started)sfx.whoosh();idx=i;const s=slides[i];
   picked=null;$('step').textContent=s.step;$('title').textContent=s.title;$('text').innerHTML=md(s.text);$('status').textContent='';$('say').hidden=true;
   const hw=HOW[s.how||'tap'];$('how').innerHTML='';$('how').append(icon(hw.i,32));$('how').append(hw.t);
+  preload((s.pictos||[]).map(x=>x[1]));
   const pc=$('pictos');pc.innerHTML='';(s.pictos||[]).forEach(([ic,w])=>{const b=h('button',{class:'picto','aria-label':'Escuchar: '+w},pc);b.append(icon(ic,50));h('span',{},b).textContent=w;b.onclick=()=>{ac();sfx.tap();speak(w);};});
   const sc=$('scene');sc.innerHTML='';restart(sc,'enter');
   current=makeCtx();
@@ -1865,7 +1869,7 @@ $('brand').prepend(semiIcon(40,'happy'));
   /* Semi y su órbita */
   const core=$('lxCore');core.append(semiIcon(200,'happy'));const say=$('lxSay');let sayT;
   function semiSays(txt,spoken){say.textContent=txt;say.classList.add('on');clearTimeout(sayT);sayT=setTimeout(()=>say.classList.remove('on'),3400);
-    core.classList.remove('hop');void core.offsetWidth;core.classList.add('hop');if(soundOn&&!talking)speak(spoken||txt);}
+    core.classList.remove('hop');void core.offsetWidth;core.classList.add('hop');if(soundOn){stopSpeech();speak(spoken||txt);}}
   core.onclick=()=>{ac();sfx.pop();semiSays('¡Hola! Soy Semi. ¿Me ayudas a crecer?');};
   const SATS=[['sun','Sol','me da energía','El sol me da energía.'],['drop','Agua','me despierta','El agua me despierta.'],['soil','Tierra','me alimenta','La tierra me alimenta.'],
     ['wind','Aire','para respirar','Con el aire respiro.'],['bee','Abeja','lleva el polen','La abeja lleva el polen.'],['apple','Manzana','guarda semillas','La manzana guarda semillas.']];
@@ -1920,9 +1924,10 @@ $('brand').prepend(semiIcon(40,'happy'));
   /* DUA en directo */
   const mini=$('lxMini');const MT='Las raíces. Debajo de la tierra, a Semi le salen raíces. Las raíces buscan agua y sujetan la planta para que no se caiga.';let slowDemo=false;
   $('lxTog').querySelectorAll('button').forEach(b=>b.onclick=()=>{ac();sfx.tap();const k=b.dataset.k;
-    if(k==='listen'){if(talking)return;const prev=SET.slow;SET.slow=slowDemo;mini.classList.add('talk');const was=soundOn;soundOn=true;speak(MT,()=>mini.classList.remove('talk'));soundOn=was;setTimeout(()=>{SET.slow=prev;},300);return;}
+    if(k==='listen'){stopSpeech();const prev=SET.slow;SET.slow=slowDemo;mini.classList.add('talk');const was=soundOn;soundOn=true;speak(MT,()=>mini.classList.remove('talk'));soundOn=was;setTimeout(()=>{SET.slow=prev;},300);return;}
     const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);if(k==='slow')slowDemo=on;else mini.classList.toggle(k,on);});
-  mini.querySelectorAll('.pic').forEach(p=>p.onclick=()=>{ac();sfx.tap();restart(p,'wiggle');if(!talking){const was=soundOn;soundOn=true;speak(p.dataset.w);soundOn=was;}});
+  mini.querySelectorAll('.pic').forEach(p=>p.onclick=()=>{ac();sfx.tap();restart(p,'wiggle');mini.classList.remove('talk');stopSpeech();const was=soundOn;soundOn=true;speak(p.dataset.w);soundOn=was;});
+  preload(['raíz','agua','tierra',MT,'¡Hola! Soy Semi. ¿Me ayudas a crecer?',...SATS.map(x=>x[3])]);
 
   /* cierre */
   const e=$('endArt');const es=newSvg(e,'0 0 1000 300','xMidYMax slice');
