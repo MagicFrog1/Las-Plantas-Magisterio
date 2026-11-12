@@ -272,7 +272,7 @@ body.calm [data-rv]{opacity:1;transform:none}
 .dot.done{background:#DDF5D6;border-color:var(--leaf)}
 .dot.active{background:var(--sun);border-color:var(--sun-d);transform:scale(1.18)}
 .icon-btn{width:48px;height:48px;border-radius:50%;border:none;background:#fff;font-size:22px;cursor:pointer;box-shadow:0 4px 0 var(--line)}
-main{display:grid;grid-template-columns:minmax(300px,1fr) 2.45fr;gap:14px;min-height:0}
+main{display:grid;grid-template-columns:minmax(300px,1fr) 2.45fr;gap:14px;min-height:0;position:relative}
 .panel{background:#fff;border-radius:30px;padding:22px 24px;box-shadow:0 6px 0 var(--line),0 14px 30px rgba(30,90,54,.08);display:flex;flex-direction:column;gap:14px;overflow:auto;min-height:0}
 .step{font-family:'Baloo 2',system-ui,sans-serif;font-weight:700;font-size:17px;color:#6FA868}
 .panel h1{font-size:clamp(30px,3vw,44px);margin:0;line-height:1;font-weight:800}
@@ -308,7 +308,7 @@ footer.ctrl{display:flex;justify-content:space-between;align-items:center;gap:10
 .quiz{flex:1;display:grid;grid-template-columns:minmax(170px,1fr) 2.6fr;gap:12px;padding:14px;min-height:0;background:linear-gradient(#D9F2FF,#EEFBE9)}
 .pot{background:rgba(255,255,255,.7);border-radius:24px;min-height:0;display:flex}
 .pot svg{width:100%;height:100%}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:12px;min-height:0}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,1fr);gap:12px;min-height:0}
 .card{background:#fff;border-radius:24px;border:4px solid #E3EFE0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;box-shadow:0 6px 0 #D3E3CF;transition:transform .15s,background .2s;min-height:0;padding:6px}
 .card:hover{transform:translateY(-3px)}
 .card .emo{font-size:clamp(40px,5vw,72px);line-height:1}
@@ -379,9 +379,9 @@ footer.ctrl{display:flex;justify-content:space-between;align-items:center;gap:10
 .say .av{width:58px;height:58px}
 .say.ok .bub{background:#E9FAE3}
 .card .emo svg{width:clamp(64px,7vw,110px);height:auto}
-.modal{position:fixed;inset:0;background:rgba(70,40,60,.38);display:grid;place-items:center;z-index:60;padding:16px;overflow:auto}
+.modal{position:fixed;inset:0;background:rgba(70,40,60,.38);display:grid;place-items:normal;z-index:60;padding:16px;overflow:auto}
 .modal[hidden]{display:none}
-.sheet{background:#fff;border-radius:34px;padding:26px 28px;max-width:640px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.25);border:6px solid #FFE3EC}
+.sheet{margin:auto;background:#fff;border-radius:34px;padding:26px 28px;max-width:640px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.25);border:6px solid #FFE3EC}
 .sheet h2{font-size:36px;margin:0 0 4px}
 .sheet .sub{font-size:17px;margin-bottom:8px}
 .opt{display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px;padding:12px 0;border-top:3px dotted #F3DCE6}
@@ -429,13 +429,80 @@ body.talking .talk{display:inline-flex}
 @keyframes eq{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
 
 
-@media (max-width:900px),(orientation:portrait){
+@media (orientation:portrait),(max-width:900px) and (min-height:501px){
   main{grid-template-columns:1fr;grid-template-rows:auto 1fr}
   .panel{max-height:40vh;padding:16px 18px;gap:10px}
   .dot{width:28px;height:28px;font-size:13px}
   .home span{display:none}
   .quiz{grid-template-columns:1fr;grid-template-rows:minmax(110px,30%) 1fr}
   .nav{padding:12px 22px 10px;font-size:19px}
+}
+/* ----- Móvil ----- */
+.rot-hint{display:none}
+@media (max-width:700px) and (orientation:portrait){
+  #app{padding:8px 8px calc(8px + env(safe-area-inset-bottom));gap:8px}
+  .top{gap:6px}
+  .home{padding:6px;width:40px;height:40px;justify-content:center}.home svg{width:26px;height:26px}
+  .icon-btn{width:40px;height:40px}.icon-btn svg{width:26px;height:26px}
+  .progress{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;gap:5px;padding:6px 4px;scroll-snap-type:x proximity;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+  .progress::-webkit-scrollbar{display:none}
+  .dot{flex:none;width:32px;height:32px;scroll-snap-align:center}.dot svg{width:24px;height:24px}
+  .dot.active{transform:scale(1.12)}
+  #app{grid-template-columns:minmax(0,1fr);width:100%;overflow:hidden}
+  main{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1.15fr) minmax(0,1fr);gap:8px}
+  .panel,.scene{min-width:0}
+  .scene{order:-1;border-radius:22px}
+  .panel{order:0;max-height:none;padding:14px 16px 16px;gap:9px;border-radius:22px}
+  .panel>.say{bottom:-16px;margin:0 -16px -16px;padding:8px 16px 12px}
+  .step{font-size:14px}.how{font-size:15px;padding:3px 12px 3px 4px}.how svg{width:26px;height:26px}
+  .panel h1{font-size:25px}
+  .panel p{font-size:17px;line-height:1.4}
+  .pictos{gap:7px}.picto{font-size:14px;padding:5px 6px 4px;border-radius:16px}.picto svg{width:36px;height:36px}
+  .listen,.help{font-size:15px;padding:7px 14px 7px 8px}.listen svg,.help svg{width:22px;height:22px}
+  .say{grid-template-columns:40px 1fr}.say .av,.say .av svg{width:40px;height:40px}.say .bub{font-size:16px;padding:9px 12px}
+  .status .prog svg{width:28px;height:28px}
+  .nav{padding:11px 20px 9px;font-size:18px}
+  .wbtn{font-size:15px;padding:7px 11px 6px;border-radius:16px}.wbtn svg{width:28px;height:28px}
+  .wbar,.cbar{bottom:8px;gap:6px}
+  .bigstart{font-size:24px;padding:12px 26px 10px}
+  .quiz{padding:8px;gap:8px;grid-template-columns:minmax(0,1fr)}.cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.card{border-width:3px;border-radius:16px;min-width:0;padding:2px}.card .emo,.card .emo svg{width:min(46px,78%);height:auto;font-size:0}.quiz{grid-template-rows:minmax(56px,22%) 1fr}.card .lbl{font-size:13px}
+  body.bigtext .panel h1{font-size:30px}body.bigtext .panel p{font-size:21px}body.bigtext .say .bub{font-size:19px}
+  body.bigtext main{grid-template-columns:minmax(0,1fr)}
+  .rot-hint{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.94);border:none;border-radius:999px;padding:6px 8px 6px 10px;font-family:'Baloo 2',system-ui,sans-serif;font-weight:700;font-size:14px;color:var(--deep);box-shadow:0 6px 16px -8px rgba(30,90,54,.5);white-space:nowrap;animation:rise .5s .6s both;cursor:pointer}
+  .rot-hint .ph{width:16px;height:26px;border:3px solid var(--deep);border-radius:5px;animation:tilt 2.4s ease-in-out infinite}
+  .rot-hint b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#EAF7E4;font-size:14px;line-height:1}
+  body.norot .rot-hint{display:none}
+}
+@keyframes tilt{0%,30%{transform:rotate(0)}55%,85%{transform:rotate(90deg)}100%{transform:rotate(0)}}
+@media (max-height:500px) and (orientation:landscape){
+  #app{padding:6px calc(8px + env(safe-area-inset-right)) 6px calc(8px + env(safe-area-inset-left));gap:6px}
+  .top{gap:6px}
+  .home{padding:4px;width:36px;height:36px;justify-content:center}.home span{display:none}.home svg{width:24px;height:24px}
+  .icon-btn{width:36px;height:36px;box-shadow:0 3px 0 var(--line)}.icon-btn svg{width:24px;height:24px}
+  .progress{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;gap:4px;padding:4px 2px}
+  .progress::-webkit-scrollbar{display:none}
+  .dot{flex:none;width:28px;height:28px;border-width:2px}.dot svg{width:20px;height:20px}.dot.active{transform:scale(1.1)}
+  main{grid-template-columns:minmax(220px,34%) 1fr;grid-template-rows:1fr;gap:8px}
+  body.bigtext main{grid-template-columns:minmax(240px,40%) 1fr}
+  .panel{max-height:none;padding:10px 12px 12px;gap:7px;border-radius:18px}
+  .panel>.say{bottom:-12px;margin:0 -12px -12px;padding:6px 12px 10px}
+  .step{font-size:12.5px}.how{font-size:13px;padding:2px 10px 2px 3px}.how svg{width:22px;height:22px}
+  .panel h1{font-size:20px}
+  .panel p{font-size:14.5px;line-height:1.38}
+  .pictos{gap:5px}.picto{font-size:12px;padding:3px 5px 2px;border-radius:12px}.picto svg{width:28px;height:28px}
+  .listen,.help{font-size:13px;padding:5px 11px 5px 6px}.listen svg,.help svg{width:18px;height:18px}
+  .talk{font-size:13px;padding:4px 10px 3px 8px}
+  .say{grid-template-columns:32px 1fr;gap:6px}.say .av,.say .av svg{width:32px;height:32px}.say .bub{font-size:13.5px;padding:7px 10px;border-width:2px}
+  .status{font-size:16px}.status .prog svg{width:22px;height:22px}
+  body.bigtext .panel h1{font-size:23px}body.bigtext .panel p{font-size:17px}body.bigtext .say .bub{font-size:15.5px}
+  .scene{border-radius:18px}
+  footer.ctrl{gap:8px}
+  .nav{padding:6px 16px 5px;font-size:15px;box-shadow:0 3px 0 var(--line)}.nav.next{box-shadow:0 3px 0 #26703A}.nav svg{width:20px;height:20px}
+  .wbtn{font-size:13px;padding:5px 9px 4px;border-radius:14px}.wbtn svg{width:24px;height:24px}
+  .wbar,.cbar{bottom:6px;gap:5px}
+  .bigstart{font-size:20px;padding:10px 22px 8px;bottom:5%}
+  .sheet{padding:16px 18px;border-radius:24px}.sheet h2{font-size:24px;margin:0 0 4px}
+  .quiz{padding:6px;gap:6px;grid-template-columns:minmax(120px,1fr) 2.6fr}.card .lbl{font-size:13px}.card{border-width:3px;border-radius:16px}
 }
 </style>
 </head>
@@ -601,6 +668,7 @@ body.talking .talk{display:inline-flex}
     <button class="icon-btn" id="setBtn" title="Ajustes" aria-label="Ajustes"></button>
   </div>
   <main>
+    <button class="rot-hint" id="rotHint" aria-label="Consejo: gira el móvil para verlo más grande. Toca para cerrar."><span class="ph"></span>Gira el móvil para verlo en grande<b aria-hidden="true">×</b></button>
     <section class="panel" id="panel" aria-live="polite">
       <div class="step" id="step"></div>
       <div class="how" id="how"></div>
@@ -700,8 +768,8 @@ const sfx={
 function clean(t){return t.replace(/\*\*/g,'').replace(/O₂/g,'oxígeno').replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu,'').replace(/\s+/g,' ').trim();}
 let voice=null,speakId=0,curAudio=null;
 /* Voz de Carlota (ElevenLabs): frases pregrabadas en audio/*.mp3. Las que no estén grabadas usan la voz del navegador. */
-const CLIPS=[["El viaje de Semi. ¡Hola! Soy Semi, una semillita. ¿Me acompañas a descubrir cómo me convierto en una planta? Pulsa “¡Empezar!”.", "00"], ["La semilla. Todas las plantas empiezan siendo una semilla. Dentro hay una plantita bebé dormida. Para despertarla necesita agua. ¡Toca la nube para que llueva!", "01"], ["Las raíces. La plantita saca raíces por debajo de la tierra. Las raíces son como pajitas: ¡sirven para beber agua! Arrastra la punta de la raíz hasta cada charquito de agua.", "02"], ["Las partes de la planta. Cada parte de la planta tiene un trabajo. Toca las raíces, el tallo, las hojas, la flor y el fruto para descubrirlo.", "03"], ["¿Cómo come una planta?. Las plantas no tienen boca: ¡fabrican su comida en las hojas! Para eso necesitan sol, agua, aire y tierra. Arrastra cada cosa hasta la planta.", "04"], ["El tiempo y el clima. Las plantas notan el tiempo que hace. Les gusta el sol y la lluvia, pero no el frío ni el calor muy fuertes. Pulsa los botones y mira cómo se siente.", "05"], ["La flor y la abeja. Cuando la planta es mayor, le salen flores. Las abejas van de flor en flor llevando un polvito amarillo: el polen. ¡Así las flores pueden dar frutos! Guía a la abeja por todas las flores.", "06"], ["Del fruto a la semilla. La flor se convierte en un fruto, ¡y dentro hay semillas nuevas! Ábrelo y entierra las semillas en los agujeros.", "07"], ["El ciclo de la vida. Nacer, crecer, dar flores, dar frutos… ¡y vuelta a empezar! Toca cada dibujo o pulsa “Ver el ciclo”.", "08"], ["¿Qué necesita una planta?. Toca solo las cosas que necesita una planta para vivir. ¡Cuidado, que hay trampas!", "09"], ["¡Eres un pequeño jardinero!. Has acompañado a Semi en todo su viaje: de semilla a planta, de flor a fruto… ¡y otra vez a semilla! ¡Enhorabuena!", "10"], ["¡Semi se ha despertado! Le ha salido un brote hacia arriba y raíces hacia abajo. ¡Ya es una plantita bebé!", "11"], ["¡Genial! Las raíces han encontrado el agua y la planta ha crecido. Además, las raíces la sujetan para que el viento no se la lleve.", "12"], ["¡Ahora juegas tú! Toca el tallo.", "13"], ["¡Fenomenal! Ya conoces las partes de la planta: raíz, tallo, hojas, flor y fruto.", "14"], ["¡La planta ya tiene su comida y está feliz! Y mientras la fabrica, nos regala el aire limpio que respiramos. ¡Gracias, planta!", "15"], ["¡Muy bien! A las plantas les gusta el sol y la lluvia. Cuando hace mucho frío o mucho calor, lo pasan mal.", "16"], ["¡Bravo! La abeja ha polinizado todas las flores. Ahora las flores podrán convertirse en frutos con semillas dentro.", "18"], ["Mira la flor que visitó la abeja… ¡está cambiando!", "19"], ["¡A dormir, semillita! Entierra las otras dos.", "22"], ["Con un poco de agua y sol…", "23"], ["¡Las semillas ya están bajo la tierra y están naciendo plantas nuevas! El viaje vuelve a empezar.", "24"], ["¡Así es el ciclo de vida de las plantas! Una semilla se hace planta, y la planta da semillas nuevas.", "25"], ["¡Perfecto! Las plantas necesitan sol, agua, aire y tierra. ¡Ya lo sabes todo!", "26"], ["Las RAÍCES están escondidas debajo de la tierra. Beben agua y sujetan la planta para que no se caiga.", "27"], ["El TALLO es como un ascensor: sube el agua desde las raíces hasta las hojas. ¡Y mantiene la planta de pie!", "28"], ["Las HOJAS atrapan la luz del sol para fabricar la comida de la planta. ¡Son su cocina!", "29"], ["La FLOR es la parte más bonita. Con sus colores llama a las abejas, y de ella nace el fruto.", "30"], ["El FRUTO guarda dentro las semillas. ¡Algunos nos los comemos, como la manzana!", "31"], ["¡Luz del sol! Las hojas la atrapan para fabricar la comida de la planta.", "32"], ["¡Agua! Las raíces la beben y sube por el tallo hasta las hojas.", "33"], ["¡Aire! Las hojas lo respiran por unos agujeritos tan pequeños que no se ven.", "34"], ["De plantita a manzano. Semi es una pepita de manzana. Con sol, agua y mucho tiempo, su plantita crece y crece… ¡hasta convertirse en un árbol! Toca el sol para que pasen los años.", "100"], ["La flor y la abeja. Cuando el manzano es mayor, le salen flores. Las abejas llevan un polvito amarillo, el polen, de las flores de un manzano a las flores de otro manzano. ¡Así las flores pueden dar frutos! Guía a la abeja de un árbol a otro.", "101"], ["¿Qué fruto da cada planta? Muchas plantas y árboles nos dan frutos: el manzano da manzanas, el naranjo da naranjas… Arrastra cada fruto hasta su planta.", "102"], ["Semilla: Todo empieza con una semilla pequeñita.", "103"], ["Brote: Con agua, la semilla se despierta y sale un brote con raíces.", "104"], ["Planta: Las raíces beben agua y las hojas atrapan el sol. ¡La planta crece y crece!", "105"], ["Flor: Le salen flores y las abejas las polinizan.", "106"], ["Fruto: La flor se convierte en un fruto con semillas dentro.", "107"], ["A la tierra: Las semillas caen a la tierra. Y cuando la planta se hace viejita, se seca y se convierte en abono para las plantas nuevas.", "108"], ["¡Qué gustito! Con el sol, la planta fabrica su comida y crece fuerte.", "109"], ["¡Glu, glu! La lluvia le da agua para beber. ¡Le encanta!", "110"], ["¡Brrr, qué frío! Con mucho frío la planta tirita y deja de crecer. Muchas plantas pierden sus hojas en invierno.", "111"], ["¡Uf, qué calor! Si hace demasiado calor y no llueve, la tierra se seca y la planta se pone mustia.", "112"], ["¡Sí! El manzano da manzanas.", "113"], ["¡Sí! El naranjo da naranjas.", "114"], ["¡Sí! La tomatera da tomates.", "115"], ["¡Sí! El fresal da fresas.", "116"], ["¡Sí! La planta necesita la luz del sol.", "117"], ["¡Sí! La planta necesita agua para beber.", "118"], ["¡Sí! La planta necesita aire.", "119"], ["¡Sí! En la tierra están las vitaminas de la planta.", "120"], ["¡Jajaja! Las plantas no comen helado.", "121"], ["¡Qué risa! Las plantas no ven la tele.", "122"], ["¡Uy! Las chuches no son para las plantas.", "123"], ["¡Qué gracioso! Las plantas no necesitan un peluche.", "124"], ["¡Casi! Busca la raíz.", "125"], ["¡Casi! Busca el tallo.", "126"], ["¡Casi! Busca las hojas.", "127"], ["¡Casi! Busca la flor.", "128"], ["¡Casi! Busca el fruto.", "129"], ["¡Semi ya es un manzano! En primavera se llena de flores, y de esas flores saldrán las manzanas.", "130"], ["Este polen es de este mismo manzano. ¡Llévalo al otro árbol!", "131"], ["¡La abeja ha cogido polen! Ahora llévalo a las flores del otro manzano.", "132"], ["¡Bien! La abeja ha dejado polen en la flor y se ha llevado un poquito más. ¡Vamos a otra flor!", "133"], ["¡Genial!", "134"], ["¡Ya casi está!", "135"], ["¡Otra más!", "136"], ["¡La flor se ha convertido en un fruto! Toca la manzana para ver qué tiene dentro.", "137"], ["¡Dentro del fruto hay semillas! Ahora arrastra cada semilla a un agujero para enterrarla.", "138"], ["¡Uy! Esa planta no da ese fruto. ¡Prueba otra vez!", "139"], ["¡Muy bien! Todos estos frutos nacen de una flor y guardan semillas dentro.", "140"], ["Así hablo ahora.", "141"], ["¡Hola! Soy Semi. ¿Me ayudas a crecer?", "142"], ["¡Más agua, por favor!", "143"], ["¡Un poquito más!", "144"], ["¡Glu, glu! ¡Qué rica el agua! Ahora busca otra gota.", "145"], ["¡Muy bien! Ya solo queda una.", "146"], ["¡Ha pasado un año! La plantita ya es un arbolito.", "147"], ["¡Cómo crece! Toca otra vez el sol.", "148"], ["El sol me da energía.", "149"], ["El agua me despierta.", "150"], ["La tierra me alimenta.", "151"], ["Con el aire respiro.", "152"], ["La abeja lleva el polen.", "153"], ["La manzana guarda semillas.", "154"], ["Las raíces. Debajo de la tierra, a Semi le salen raíces. Las raíces buscan agua y sujetan la planta para que no se caiga.", "155"], ["¡Mira la mano! Yo te ayudo.", "156"], ["raíz", "w_raiz"], ["tallo", "w_tallo"], ["hojas", "w_hojas"], ["semilla", "w_semilla"], ["brote", "w_brote"], ["planta", "w_planta"], ["flor", "w_flor"], ["fruto", "w_fruto"], ["agua", "w_agua"], ["aire", "w_aire"], ["Semi", "w_semi"], ["Manzana", "w_manzana"], ["Manzano", "w_manzano"], ["Sol", "w_sol"], ["Tierra", "w_tierra"], ["Lluvia", "w_lluvia"], ["Frío", "w_frio"], ["Calor", "w_calor"], ["Plantita", "w_plantita"], ["Árbol", "w_arbol"], ["Abeja", "w_abeja"], ["Polen", "w_polen"], ["Otro manzano", "w_otro_manzano"], ["Naranja", "w_naranja"], ["Tomate", "w_tomate"], ["Fresa", "w_fresa"], ["Diploma", "w_diploma"]];
-const norm=t=>clean(t).toLowerCase().replace(/[^a-z0-9áéíóúñü]/g,'');
+const CLIPS=[["El viaje de Semi. ¡Hola! Soy Semi, una semillita. ¿Me acompañas a descubrir cómo me convierto en una planta? Pulsa “¡Empezar!”.", "00"], ["La semilla. Todas las plantas empiezan siendo una semilla. Dentro hay una plantita bebé dormida. Para despertarla necesita agua. ¡Toca la nube para que llueva!", "01"], ["Las raíces. La plantita saca raíces por debajo de la tierra. Las raíces son como pajitas: ¡sirven para beber agua! Arrastra la punta de la raíz hasta cada charquito de agua.", "02"], ["Las partes de la planta. Cada parte de la planta tiene un trabajo. Toca las raíces, el tallo, las hojas, la flor y el fruto para descubrirlo.", "03"], ["¿Cómo come una planta?. Las plantas no tienen boca: ¡fabrican su comida en las hojas! Para eso necesitan sol, agua, aire y tierra. Arrastra cada cosa hasta la planta.", "04"], ["El tiempo y el clima. Las plantas notan el tiempo que hace. Les gusta el sol y la lluvia, pero no el frío ni el calor muy fuertes. Pulsa los botones y mira cómo se siente.", "05"], ["La flor y la abeja. Cuando la planta es mayor, le salen flores. Las abejas van de flor en flor llevando un polvito amarillo: el polen. ¡Así las flores pueden dar frutos! Guía a la abeja por todas las flores.", "06"], ["Del fruto a la semilla. La flor se convierte en un fruto, ¡y dentro hay semillas nuevas! Ábrelo y entierra las semillas en los agujeros.", "07"], ["El ciclo de la vida. Nacer, crecer, dar flores, dar frutos… ¡y vuelta a empezar! Toca cada dibujo o pulsa “Ver el ciclo”.", "08"], ["¿Qué necesita una planta?. Toca solo las cosas que necesita una planta para vivir. ¡Cuidado, que hay trampas!", "09"], ["¡Eres un pequeño jardinero!. Has acompañado a Semi en todo su viaje: de semilla a planta, de flor a fruto… ¡y otra vez a semilla! ¡Enhorabuena!", "10"], ["¡Semi se ha despertado! Le ha salido un brote hacia arriba y raíces hacia abajo. ¡Ya es una plantita bebé!", "11"], ["¡Genial! Las raíces han encontrado el agua y la planta ha crecido. Además, las raíces la sujetan para que el viento no se la lleve.", "12"], ["¡Ahora juegas tú! Toca el tallo.", "13"], ["¡Fenomenal! Ya conoces las partes de la planta: raíz, tallo, hojas, flor y fruto.", "14"], ["¡La planta ya tiene su comida y está feliz! Y mientras la fabrica, nos regala el aire limpio que respiramos. ¡Gracias, planta!", "15"], ["¡Muy bien! A las plantas les gusta el sol y la lluvia. Cuando hace mucho frío o mucho calor, lo pasan mal.", "16"], ["¡Bravo! La abeja ha polinizado todas las flores. Ahora las flores podrán convertirse en frutos con semillas dentro.", "18"], ["Mira la flor que visitó la abeja… ¡está cambiando!", "19"], ["¡A dormir, semillita! Entierra las otras dos.", "22"], ["Con un poco de agua y sol…", "23"], ["¡Las semillas ya están bajo la tierra y están naciendo plantas nuevas! El viaje vuelve a empezar.", "24"], ["¡Así es el ciclo de vida de las plantas! Una semilla se hace planta, y la planta da semillas nuevas.", "25"], ["¡Perfecto! Las plantas necesitan sol, agua, aire y tierra. ¡Ya lo sabes todo!", "26"], ["Las RAÍCES están escondidas debajo de la tierra. Beben agua y sujetan la planta para que no se caiga.", "27"], ["El TALLO es como un ascensor: sube el agua desde las raíces hasta las hojas. ¡Y mantiene la planta de pie!", "28"], ["Las HOJAS atrapan la luz del sol para fabricar la comida de la planta. ¡Son su cocina!", "29"], ["La FLOR es la parte más bonita. Con sus colores llama a las abejas, y de ella nace el fruto.", "30"], ["El FRUTO guarda dentro las semillas. ¡Algunos nos los comemos, como la manzana!", "31"], ["¡Luz del sol! Las hojas la atrapan para fabricar la comida de la planta.", "32"], ["¡Agua! Las raíces la beben y sube por el tallo hasta las hojas.", "33"], ["¡Aire! Las hojas lo respiran por unos agujeritos tan pequeños que no se ven.", "34"], ["De plantita a manzano. Semi es una pepita de manzana. Con sol, agua y mucho tiempo, su plantita crece y crece… ¡hasta convertirse en un árbol! Toca el sol para que pasen los años.", "100"], ["La flor y la abeja. Cuando el manzano es mayor, le salen flores. Las abejas llevan un polvito amarillo, el polen, de las flores de un manzano a las flores de otro manzano. ¡Así las flores pueden dar frutos! Guía a la abeja de un árbol a otro.", "101"], ["¿Qué fruto da cada planta? Muchas plantas y árboles nos dan frutos: el manzano da manzanas, el naranjo da naranjas… Arrastra cada fruto hasta su planta.", "102"], ["Semilla: Todo empieza con una semilla pequeñita.", "103"], ["Brote: Con agua, la semilla se despierta y sale un brote con raíces.", "104"], ["Planta: Las raíces beben agua y las hojas atrapan el sol. ¡La planta crece y crece!", "105"], ["Flor: Le salen flores y las abejas las polinizan.", "106"], ["Fruto: La flor se convierte en un fruto con semillas dentro.", "107"], ["A la tierra: Las semillas caen a la tierra. Y cuando la planta se hace viejita, se seca y se convierte en abono para las plantas nuevas.", "108"], ["¡Qué gustito! Con el sol, la planta fabrica su comida y crece fuerte.", "109"], ["¡Glu, glu! La lluvia le da agua para beber. ¡Le encanta!", "110"], ["¡Brrr, qué frío! Con mucho frío la planta tirita y deja de crecer. Muchas plantas pierden sus hojas en invierno.", "111"], ["¡Uf, qué calor! Si hace demasiado calor y no llueve, la tierra se seca y la planta se pone mustia.", "112"], ["¡Sí! El manzano da manzanas.", "113"], ["¡Sí! El naranjo da naranjas.", "114"], ["¡Sí! La tomatera da tomates.", "115"], ["¡Sí! El fresal da fresas.", "116"], ["¡Sí! La planta necesita la luz del sol.", "117"], ["¡Sí! La planta necesita agua para beber.", "118"], ["¡Sí! La planta necesita aire.", "119"], ["¡Sí! En la tierra están las vitaminas de la planta.", "120"], ["¡Jajaja! Las plantas no comen helado.", "121"], ["¡Qué risa! Las plantas no ven la tele.", "122"], ["¡Uy! Las chuches no son para las plantas.", "123"], ["¡Qué gracioso! Las plantas no necesitan un peluche.", "124"], ["¡Casi! Busca la raíz.", "125"], ["¡Casi! Busca el tallo.", "126"], ["¡Casi! Busca las hojas.", "127"], ["¡Casi! Busca la flor.", "128"], ["¡Casi! Busca el fruto.", "129"], ["¡Semi ya es un manzano! En primavera se llena de flores, y de esas flores saldrán las manzanas.", "130"], ["Este polen es de este mismo manzano. ¡Llévalo al otro árbol!", "131"], ["¡La abeja ha cogido polen! Ahora llévalo a las flores del otro manzano.", "132"], ["¡Bien! La abeja ha dejado polen en la flor y se ha llevado un poquito más. ¡Vamos a otra flor!", "133"], ["¡Genial!", "134"], ["¡Ya casi está!", "135"], ["¡Otra más!", "136"], ["¡La flor se ha convertido en un fruto! Toca la manzana para ver qué tiene dentro.", "137"], ["¡Dentro del fruto hay semillas! Ahora arrastra cada semilla a un agujero para enterrarla.", "138"], ["¡Uy! Esa planta no da ese fruto. ¡Prueba otra vez!", "139"], ["¡Muy bien! Todos estos frutos nacen de una flor y guardan semillas dentro.", "140"], ["Así hablo ahora.", "141"], ["¡Hola! Soy Semi. ¿Me ayudas a crecer?", "142"], ["¡Más agua, por favor!", "143"], ["¡Un poquito más!", "144"], ["¡Glu, glu! ¡Qué rica el agua! Ahora busca otra gota.", "145"], ["¡Muy bien! Ya solo queda una.", "146"], ["¡Ha pasado un año! La plantita ya es un arbolito.", "147"], ["¡Cómo crece! Toca otra vez el sol.", "148"], ["El sol me da energía.", "149"], ["El agua me despierta.", "150"], ["La tierra me alimenta.", "151"], ["Con el aire respiro.", "152"], ["La abeja lleva el polen.", "153"], ["La manzana guarda semillas.", "154"], ["Las raíces. Debajo de la tierra, a Semi le salen raíces. Las raíces buscan agua y sujetan la planta para que no se caiga.", "155"], ["¡Mira la mano! Yo te ayudo.", "156"], ["raíz", "w_raiz"], ["tallo", "w_tallo"], ["hojas", "w_hojas"], ["semilla", "w_semilla"], ["brote", "w_brote"], ["planta", "w_planta"], ["flor", "w_flor"], ["fruto", "w_fruto"], ["agua", "w_agua"], ["aire", "w_aire"], ["Semi", "w_semi"], ["Manzana", "w_manzana"], ["Manzano", "w_manzano"], ["Sol", "w_sol"], ["Tierra", "w_tierra"], ["Lluvia", "w_lluvia"], ["Frío", "w_frio"], ["Calor", "w_calor"], ["Plantita", "w_plantita"], ["Árbol", "w_arbol"], ["Abeja", "w_abeja"], ["Polen", "w_polen"], ["Otro manzano", "w_otro_manzano"], ["Naranja", "w_naranja"], ["Tomate", "w_tomate"], ["Fresa", "w_fresa"], ["Diploma", "w_diploma"], ["¡Genial! Busca las hojas.", "x_tallo_ok"], ["¡Muy bien! Busca la raíz.", "x_hojas_ok"], ["¡Tierra! En la tierra están las vitaminas de la planta.", "x_tierra"]];
+const norm=t=>clean(t).toLowerCase().replace(/[^a-záéíóúñü]/g,'');
 const AUDIO={};CLIPS.forEach(([t,id])=>{AUDIO[norm(t)]='audio/'+id+'.mp3';});
 const FEMALE=/helena|elvira|laura|luc[ií]a|m[oó]nica|paulina|sabina|dalia|esperanza|elena|ximena|paloma|irene|google español|female|mujer/i;
 function pickVoice(){try{const vs=speechSynthesis.getVoices().filter(v=>/^es/i.test(v.lang));
@@ -1271,7 +1339,7 @@ function sceneParts(sc,ctx){
   function startQuiz(){mode='quiz';tagsG.style.transition='opacity .5s';tagsG.style.opacity=0;ctx.status('star',0,3);sfx.pop();ctx.say('¡Ahora juegas tú! Toca el tallo.');}
   function answer(p){const target=byK[qs[qi]];
     if(p.k===target.k){highlight(p);sfx.good();sparkBurst(ctx,svg,p.anchor.x,p.anchor.y);qi++;ctx.status('star',qi,3);
-      if(qi<3)ctx.say(['','¡Sí, ese es el tallo! Ahora toca las hojas.','¡Sí, esas son las hojas! Ahora toca la raíz.'][qi]);
+      if(qi<3)ctx.say(['','¡Genial! Busca las hojas.','¡Muy bien! Busca la raíz.'][qi]);
       else{tagsG.style.opacity=1;ctx.done('¡Fenomenal! Ya conoces las partes de la planta: raíz, tallo, hojas, flor y fruto.');mode='end';}}
     else{sfx.bad();p.nodes.forEach(n=>restart(n,'wiggle'));ctx.say(`¡Casi! Busca ${target.the}.`);}}
 }
@@ -1297,7 +1365,7 @@ function sceneFeed(sc,ctx){
         along(ctx,[{x:rand(720,860),y:rand(120,260)},{x:rand(580,660),y:rand(250,330)},lp[i%lp.length]],420,p=>{c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);},()=>c.remove());});}},
     {k:'tierra',label:'Tierra',home:{x:885,y:330},draw:g=>{el('path',{d:'M-48,28 C-46,-10 -30,-30 0,-32 C30,-30 46,-10 48,28Z',fill:'url(#gSoil)',stroke:'#5E3A1A','stroke-width':3},g);
         [[-22,10,'#FFD23F'],[18,14,'#74C0FC'],[-4,-14,'#FF8FB1'],[26,-4,'#B2F2BB'],[-30,-2,'#fff']].forEach(([cx,cy,f])=>{el('path',{d:'M0,-6 L5,0 L0,6 L-5,0Z',fill:f,transform:`translate(${cx},${cy})`},g);});drawFace(g,0,8,.85,'happy');},
-      msg:'¡Tierra! Tiene vitaminas que se llaman minerales. Las raíces se las toman con el agua.',fx(){const cols=['#FFD23F','#74C0FC','#FF8FB1','#B2F2BB'];for(let i=0;i<14;i++)ctx.after(i*70,()=>{const c=el('path',{d:'M0,-7 L2,-2 L7,0 L2,2 L0,7 L-2,2 L-7,0 L-2,-2Z',fill:cols[i%4]},fxG);
+      msg:'¡Tierra! En la tierra están las vitaminas de la planta.',fx(){const cols=['#FFD23F','#74C0FC','#FF8FB1','#B2F2BB'];for(let i=0;i<14;i++)ctx.after(i*70,()=>{const c=el('path',{d:'M0,-7 L2,-2 L7,0 L2,2 L0,7 L-2,2 L-7,0 L-2,-2Z',fill:cols[i%4]},fxG);
         along(ctx,[{x:rand(300,700),y:rand(gy+70,600)},{x:500+rand(-40,40),y:gy+60},{x:500,y:gy+5}],300,p=>c.setAttribute('transform',`translate(${p.x},${p.y})`),()=>c.remove());});}}
   ];
   let fed=0;ctx.status('leaf',0,4);
@@ -1677,7 +1745,7 @@ function lab(btn,ic,txt,after){btn.innerHTML='';const i=icon(ic,28);if(after){bt
 /* =========================================================
    Navegación de la app
    ========================================================= */
-function updateProgress(){const pr=$('progress');pr.innerHTML='';slides.forEach((s,i)=>{const d=h('button',{class:'dot'+(i===idx?' active':'')+(doneSet.has(i)?' done':''),title:s.title,'aria-label':s.title},pr);d.append(icon(s.icon,30));
+function updateProgress(){requestAnimationFrame(()=>{const a=document.querySelector('.dot.active'),pr=$('progress');if(a&&pr.scrollWidth>pr.clientWidth)pr.scrollTo({left:a.offsetLeft-pr.clientWidth/2+a.offsetWidth/2,behavior:'smooth'});});const pr=$('progress');pr.innerHTML='';slides.forEach((s,i)=>{const d=h('button',{class:'dot'+(i===idx?' active':'')+(doneSet.has(i)?' done':''),title:s.title,'aria-label':s.title},pr);d.append(icon(s.icon,30));
   d.onclick=()=>{started=true;ac();go(i);};});}
 function go(i){
   if(i<0||i>=slides.length)return;
@@ -1717,6 +1785,9 @@ $('helpBtn').onclick=()=>{ac();if(current&&current.hint&&!current.completed){cur
 document.querySelectorAll('[data-icon]').forEach(d=>d.append(icon(d.dataset.icon,64)));
 applySet();
 $('homeBtn').onclick=home;
+try{if(localStorage.getItem('semiNoRot'))document.body.classList.add('norot');}catch(e){}
+$('rotHint').onclick=()=>{document.body.classList.add('norot');try{localStorage.setItem('semiNoRot','1');}catch(e){}};
+addEventListener('orientationchange',()=>{if(matchMedia('(orientation:landscape)').matches)document.body.classList.add('norot');});
 document.addEventListener('keydown',e=>{if(!document.body.classList.contains('playing'))return;if(e.key==='ArrowRight')$('next').click();if(e.key==='ArrowLeft'&&idx>0)$('prev').click();if(e.key==='Escape'){if(!$('setModal').hidden)$('setModal').hidden=true;else home();}});
 document.querySelectorAll('[data-start]').forEach(b=>b.addEventListener('click',play));
 $('sayAv').appendChild(semiIcon(54,'happy'));
