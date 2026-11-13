@@ -545,7 +545,7 @@ body.talking .talk{display:inline-flex}
     <div class="lx-wrap lx-load">
       <span class="lx-chip"><i></i>Para Infantil, 5 años, unos 10 minutos</span>
       <h1><span class="l1">De semilla a</span><span class="rot" id="rot"><span class="w">manzano</span><svg viewBox="0 0 400 30" preserveAspectRatio="none" aria-hidden="true"><path d="M6,20 C70,6 130,26 200,14 C270,4 330,24 394,10"/></svg></span></h1>
-      <p class="lead">Semi, una pepita de manzana, guía a la clase por el ciclo de vida de las plantas con su voz y once actividades para tocar, arrastrar y jugar.</p>
+      <p class="lead">Semi, una pepita de manzana, guía a la clase por el ciclo de vida de las plantas con su voz y doce actividades para tocar, arrastrar y jugar.</p>
       <div class="cta-row">
         <button class="btn big" data-start data-ic="play">Empezar el viaje</button>
         <a class="btn ghost" href="#demo">Probar la demo</a>
@@ -588,7 +588,7 @@ body.talking .talk{display:inline-flex}
     <div class="lx-wrap">
       <div class="center" data-rv>
         <h2 class="lx-h">El viaje, paso a paso</h2>
-        <p class="lx-sub">Once actividades cortas en orden, cada una con su explicación hablada. Se puede parar, repetir o saltar cuando la clase lo necesite.</p>
+        <p class="lx-sub">Doce actividades cortas en orden, cada una con su explicación hablada. Se puede parar, repetir o saltar cuando la clase lo necesite.</p>
       </div>
       <div class="lx-journey">
         <div class="lx-card" id="lxCard" aria-hidden="true"><div class="lx-dash" id="lxDash"></div><div class="how" id="lxHow"></div></div>
@@ -1651,6 +1651,59 @@ function sceneMatch(sc,ctx){
   hand=handHint(svg,xs[0]+44,650,'¡Llévalo a su planta!');
 }
 
+/* 11 · Puzle: arma la flor de arriba a abajo */
+const PZ={W:240,H:128};
+function pzShape(i,n=4){const w=PZ.W,h=PZ.H,c=w/2,k=24,d=22,r=16;
+  let p=`M${r},0 `;if(i>0)p+=`L${c-k},0 C${c-k},${d} ${c+k},${d} ${c+k},0 `;p+=`L${w-r},0 Q${w},0 ${w},${r} L${w},${h-r} Q${w},${h} ${w-r},${h} `;
+  if(i<n-1)p+=`L${c+k},${h} C${c+k},${h+d} ${c-k},${h+d} ${c-k},${h} `;p+=`L${r},${h} Q0,${h} 0,${h-r} L0,${r} Q0,0 ${r},0Z`;return p;}
+function drawPuzzleArt(p){const w=PZ.W,H4=PZ.H*4,gy=PZ.H*2.62,cx=w/2;const g=el('g',{},p);
+  el('rect',{x:-30,y:-30,width:w+60,height:gy+30,fill:'#D6F0FF'},g);el('rect',{x:-30,y:gy-10,width:w+60,height:H4-gy+50,fill:'url(#gSoil)'},g);
+  el('path',{d:`M-30,${gy-4} Q${w*.25},${gy-16} ${w/2},${gy-6} T${w+30},${gy-6} L${w+30},${gy+12} L-30,${gy+12}Z`,fill:'url(#gGrass)'},g);
+  [[34,gy+70,9],[200,gy+110,7],[60,gy+150,6]].forEach(([x,y,r])=>el('ellipse',{cx:x,cy:y,rx:r*1.4,ry:r,fill:'#A68A6D',opacity:.7},g));
+  drawRoots(g,cx,gy+4,128);
+  el('path',{d:`M${cx},${gy+4} C${cx-8},${gy-80} ${cx+10},${gy-160} ${cx-2},${PZ.H*.62}`,stroke:'#3E8F3A','stroke-width':10,fill:'none','stroke-linecap':'round'},g);
+  el('path',{d:`M${cx+2},${gy} C${cx-5},${gy-80} ${cx+12},${gy-160} ${cx+1},${PZ.H*.66}`,stroke:'#7CCB5A','stroke-width':3,fill:'none','stroke-linecap':'round',opacity:.7},g);
+  leaf(g,{x:cx-3,y:PZ.H*1.28,a:-150,s:.9});leaf(g,{x:cx+4,y:PZ.H*1.55,a:-30,s:.95,dark:true});leaf(g,{x:cx-4,y:PZ.H*1.86,a:-155,s:.8,dark:true});leaf(g,{x:cx+3,y:PZ.H*2.15,a:-25,s:.75});
+  const b=drawBlossom(g,cx,PZ.H*.48,2.15);drawFace(b.inner,0,1,.42,'happy');return g;}
+function scenePuzzle(sc,ctx){
+  const svg=newSvg(sc);scenery(svg,{gy:740,hills:false,clouds:false});cloudShape(svg,560,70,.75,'drift2');const uid='pz'+Math.random().toString(36).slice(2,7);
+  const BX=160,BY=48,N=4;const slots=[...Array(N)].map((_,i)=>({x:BX+PZ.W/2,y:BY+PZ.H/2+i*PZ.H}));
+  // tablero con la silueta muy suave de la planta
+  el('rect',{x:BX-22,y:BY-22,width:PZ.W+44,height:PZ.H*N+44,rx:28,fill:'#fff',opacity:.62,filter:'url(#soft)'},svg);
+  const gh=el('g',{transform:`translate(${BX},${BY})`,opacity:.14},svg);const cpg=el('clipPath',{id:uid+'b'},svg);el('rect',{width:PZ.W,height:PZ.H*N,rx:16},cpg);
+  const ga=el('g',{'clip-path':`url(#${uid}b)`},gh);drawPuzzleArt(ga);
+  for(let i=0;i<N;i++)el('path',{d:pzShape(i,N),transform:`translate(${BX},${BY+i*PZ.H})`,fill:'none',stroke:'#7FB98A','stroke-width':3,'stroke-dasharray':'9 8'},svg);
+  // flecha de arriba a abajo
+  const ax=BX-62;el('path',{d:`M${ax},${BY+70} L${ax},${BY+PZ.H*N-70}`,stroke:'#8BC6E8','stroke-width':7,'stroke-linecap':'round','stroke-dasharray':'2 16'},svg);
+  el('path',{d:`M${ax-16},${BY+PZ.H*N-84} L${ax},${BY+PZ.H*N-62} L${ax+16},${BY+PZ.H*N-84}`,stroke:'#8BC6E8','stroke-width':7,fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},svg);
+  const top=icon('sun',58);top.setAttribute('x',ax-29);top.setAttribute('y',BY+2);svg.append(top);const bot=icon('soil',58);bot.setAttribute('x',ax-29);bot.setAttribute('y',BY+PZ.H*N-58);svg.append(bot);
+  const NAMES=['flor','hojas','tallo','raíz'];const tags=el('g',{},svg);
+  const homes=shuffle([{x:600,y:150},{x:835,y:185},{x:615,y:440},{x:850,y:470}]);
+  const pcs=[];let ok=0,hand=null;ctx.status('flower',0,N);
+  for(let i=0;i<N;i++){
+    const g=el('g',{},svg);const rot=el('g',{style:`transform:rotate(${[-7,6,-5,8][i]}deg);transition:transform .35s`},g);const off=el('g',{transform:`translate(${-PZ.W/2},${-PZ.H/2})`},rot);
+    const cp=el('clipPath',{id:uid+i},svg);el('path',{d:pzShape(i,N)},cp);
+    el('path',{d:pzShape(i,N),fill:'#fff',filter:'url(#soft)'},off);
+    const art=el('g',{'clip-path':`url(#${uid+i})`},off);const inner=el('g',{transform:`translate(0,${-i*PZ.H})`},art);drawPuzzleArt(inner);
+    el('path',{d:pzShape(i,N),fill:'none',stroke:'#fff','stroke-width':5,'stroke-linejoin':'round'},off);
+    const pc={i,g,rot,home:homes[i],done:false};pcs.push(pc);
+    pc.d=draggable(svg,g,homes[i],{onStart(){if(hand){hand.remove();hand=null;}},onDrop(p){
+      const near=slots.map((q,j)=>({j,d:Math.hypot(p.x-q.x,p.y-q.y)})).sort((a,b)=>a.d-b.d)[0];
+      if(near.d>PZ.H*.75)return false;
+      if(near.j!==i){if(pcs.some(q=>q.done&&q.i===near.j))return false;sfx.bad();ctx.say(near.j>i?'¡Casi! Esa pieza va más arriba.':'¡Casi! Esa pieza va más abajo.');return false;}
+      const q=slots[i];g.style.transition='transform .4s cubic-bezier(.3,1.4,.5,1)';g.style.transform=`translate(${q.x}px,${q.y}px)`;rot.style.transform='rotate(0deg)';
+      svg.insertBefore(g,tags);pc.done=true;ok++;sfx.good();sparkBurst(ctx,svg,q.x+PZ.W/2,q.y);ctx.status('flower',ok,N);
+      const t=el('g',{transform:`translate(${BX+PZ.W+52},${q.y})`,class:'popin'},tags);el('rect',{x:-6,y:-20,width:96,height:40,rx:20,fill:'#fff',stroke:'#C9E6F8','stroke-width':3},t);
+      const tx=el('text',{x:42,y:9,'text-anchor':'middle','font-size':23,'font-weight':800,fill:'#1E5A36'},t);tx.textContent=NAMES[i];
+      if(ok<N)ctx.say(['¡Genial!','¡Otra más!','¡Ya casi está!'][ok-1]);
+      else{ctx.after(500,()=>{rot.style.transform='';const all=el('g',{class:'bob','pointer-events':'none'},svg);sparkBurst(ctx,svg,slots[0].x,slots[0].y);sfx.win();
+        ctx.done('¡Lo has conseguido! Arriba la flor, luego las hojas, el tallo y, abajo, la raíz.');});}
+      return true;}});
+  }
+  ctx.hint=()=>{const pc=pcs.find(q=>!q.done);if(pc)ghostMove(ctx,svg,pc.d.pos,slots[pc.i]);};
+  const first=pcs[0];hand=handHint(svg,first.home.x+40,first.home.y+80,'¡Arrástrala!');
+}
+
 /* 10 · El ciclo de la vida */
 function sceneCycle(sc,ctx){
   const svg=newSvg(sc);el('rect',{x:-3000,y:-3000,width:7000,height:7000,fill:'#F1FBEC'},svg);
@@ -1752,27 +1805,29 @@ function sceneFinal(sc,ctx){
 const slides=[
   {icon:'semi',step:'Bienvenida',title:'El viaje de Semi',auto:true,build:sceneIntro,how:'look',pictos:[['semi','Semi'],['apple','manzana'],['tree','manzano']],
    text:'¡Hola! Soy **Semi**, una semillita. ¿Me acompañas a descubrir cómo me convierto en una **planta**? Pulsa “¡Empezar!”.'},
-  {icon:'drop',step:'Paso 1 de 11',title:'La semilla',build:sceneSeed,how:'tap',pictos:[['seed','semilla'],['drop','agua'],['sprout','brote']],
+  {icon:'drop',step:'Paso 1 de 12',title:'La semilla',build:sceneSeed,how:'tap',pictos:[['seed','semilla'],['drop','agua'],['sprout','brote']],
    text:'Todas las plantas empiezan siendo una **semilla**. Dentro hay una plantita bebé dormida. Para despertarla necesita **agua**. ¡Toca la nube para que llueva!'},
-  {icon:'root',step:'Paso 2 de 11',title:'Las raíces',build:sceneRoots,how:'drag',pictos:[['root','raíz'],['drop','agua'],['sprout','planta']],
+  {icon:'root',step:'Paso 2 de 12',title:'Las raíces',build:sceneRoots,how:'drag',pictos:[['root','raíz'],['drop','agua'],['sprout','planta']],
    text:'La plantita saca **raíces** por debajo de la tierra. Las raíces son como pajitas: ¡sirven para **beber agua**! Arrastra la punta de la raíz hasta cada charquito de agua.'},
-  {icon:'magnifier',step:'Paso 3 de 11',title:'Las partes de la planta',build:sceneParts,how:'tap',pictos:[['root','raíz'],['stem','tallo'],['leaf','hojas'],['flower','flor'],['apple','fruto']],
+  {icon:'magnifier',step:'Paso 3 de 12',title:'Las partes de la planta',build:sceneParts,how:'tap',pictos:[['root','raíz'],['stem','tallo'],['leaf','hojas'],['flower','flor'],['apple','fruto']],
    text:'Cada parte de la planta tiene un trabajo. Toca las **raíces**, el **tallo**, las **hojas**, la **flor** y el **fruto** para descubrirlo.'},
-  {icon:'sun',step:'Paso 4 de 11',title:'¿Cómo come una planta?',build:sceneFeed,how:'drag',pictos:[['sun','sol'],['drop','agua'],['wind','aire'],['soil','tierra']],
+  {icon:'sun',step:'Paso 4 de 12',title:'¿Cómo come una planta?',build:sceneFeed,how:'drag',pictos:[['sun','sol'],['drop','agua'],['wind','aire'],['soil','tierra']],
    text:'Las plantas no tienen boca: ¡fabrican su comida en las **hojas**! Para eso necesitan **sol**, **agua**, **aire** y **tierra**. Arrastra cada cosa hasta la planta.'},
-  {icon:'weather',step:'Paso 5 de 11',title:'El tiempo y el clima',build:sceneWeather,how:'tap',pictos:[['sun','sol'],['rain','lluvia'],['snow','frío'],['hot','calor']],
+  {icon:'weather',step:'Paso 5 de 12',title:'El tiempo y el clima',build:sceneWeather,how:'tap',pictos:[['sun','sol'],['rain','lluvia'],['snow','frío'],['hot','calor']],
    text:'Las plantas notan el **tiempo** que hace. Les gusta el **sol** y la **lluvia**, pero no el **frío** ni el **calor** muy fuertes. Pulsa los botones y mira cómo se siente.'},
-  {icon:'tree',step:'Paso 6 de 11',title:'De plantita a manzano',build:sceneGrow,how:'tap',pictos:[['sprout','plantita'],['sun','sol'],['tree','árbol']],
+  {icon:'tree',step:'Paso 6 de 12',title:'De plantita a manzano',build:sceneGrow,how:'tap',pictos:[['sprout','plantita'],['sun','sol'],['tree','árbol']],
    text:'Semi es una **pepita de manzana**. Con sol, agua y mucho tiempo, su plantita crece y crece… ¡hasta convertirse en un **árbol**! Toca el sol para que pasen los años.'},
-  {icon:'bee',step:'Paso 7 de 11',title:'La flor y la abeja',build:sceneBee,how:'move',pictos:[['bee','abeja'],['flower','flor'],['pollen','polen'],['tree','otro manzano']],
+  {icon:'bee',step:'Paso 7 de 12',title:'La flor y la abeja',build:sceneBee,how:'move',pictos:[['bee','abeja'],['flower','flor'],['pollen','polen'],['tree','otro manzano']],
    text:'Cuando el manzano es mayor, le salen **flores**. Las **abejas** llevan un polvito amarillo, el **polen**, de las flores de un manzano a las flores de **otro manzano**. ¡Así las flores pueden dar frutos! Guía a la abeja de un árbol a otro.'},
-  {icon:'apple',step:'Paso 8 de 11',title:'Del fruto a la semilla',build:sceneFruit,how:'drag',pictos:[['flower','flor'],['apple','fruto'],['seed','semilla']],
+  {icon:'apple',step:'Paso 8 de 12',title:'Del fruto a la semilla',build:sceneFruit,how:'drag',pictos:[['flower','flor'],['apple','fruto'],['seed','semilla']],
    text:'La **flor** se convierte en un **fruto**, ¡y dentro hay **semillas** nuevas! Ábrelo y entierra las semillas en los agujeros.'},
-  {icon:'orange',step:'Paso 9 de 11',title:'¿Qué fruto da cada planta?',build:sceneMatch,how:'drag',pictos:[['apple','manzana'],['orange','naranja'],['tomato','tomate'],['strawberry','fresa']],
+  {icon:'orange',step:'Paso 9 de 12',title:'¿Qué fruto da cada planta?',build:sceneMatch,how:'drag',pictos:[['apple','manzana'],['orange','naranja'],['tomato','tomate'],['strawberry','fresa']],
    text:'Muchas plantas y árboles nos dan **frutos**: el **manzano** da manzanas, el **naranjo** da naranjas… Arrastra cada fruto hasta su planta.'},
-  {icon:'cycle',step:'Paso 10 de 11',title:'El ciclo de la vida',build:sceneCycle,how:'tap',pictos:[['seed','semilla'],['sprout','brote'],['flower','flor'],['apple','fruto']],
+  {icon:'cycle',step:'Paso 10 de 12',title:'El ciclo de la vida',build:sceneCycle,how:'tap',pictos:[['seed','semilla'],['sprout','brote'],['flower','flor'],['apple','fruto']],
    text:'**Nacer**, **crecer**, dar **flores**, dar **frutos**… ¡y vuelta a empezar! Toca cada dibujo o pulsa “Ver el ciclo”.'},
-  {icon:'pot',step:'Paso 11 de 11',title:'¿Qué necesita una planta?',build:sceneQuiz,how:'tap',pictos:[['sun','sol'],['drop','agua'],['wind','aire'],['soil','tierra']],
+  {icon:'flower',step:'Paso 11 de 12',title:'Arma la flor',build:scenePuzzle,how:'drag',pictos:[['flower','flor'],['leaf','hojas'],['stem','tallo'],['root','raíz']],
+   text:'¡Las piezas de esta planta se han desordenado! Ponlas en su sitio **de arriba a abajo**: la **flor**, las **hojas**, el **tallo** y la **raíz**.'},
+  {icon:'pot',step:'Paso 12 de 12',title:'¿Qué necesita una planta?',build:sceneQuiz,how:'tap',pictos:[['sun','sol'],['drop','agua'],['wind','aire'],['soil','tierra']],
    text:'Toca solo las cosas que **necesita** una planta para vivir. ¡Cuidado, que hay **trampas**!'},
   {icon:'medal',step:'¡Fin!',title:'¡Sois pequeños jardineros!',auto:true,build:sceneFinal,how:'look',pictos:[['medal','diploma'],['semi','Semi']],
    text:'Habéis acompañado a Semi en todo su viaje: de **semilla** a **planta**, de **flor** a **fruto**… ¡y otra vez a semilla! ¡Enhorabuena!'}
@@ -1946,6 +2001,10 @@ $('brand').prepend(semiIcon(40,'happy'));
       const P=k=>({x:500+Math.cos(-Math.PI/2+k*Math.PI/3)*270,y:390+Math.sin(-Math.PI/2+k*Math.PI/3)*270});
       [q=>drawSemi(s,q.x,q.y+20,.9,'sleep',{sprout:false}),q=>drawSemi(s,q.x,q.y+20,.9,'happy'),q=>drawPlant(s,{x:q.x,gy:q.y+50,h:100,n:3,ls:.5,sway:false}),q=>drawBlossom(s,q.x,q.y,2.4),q=>drawApple(s,q.x,q.y+6,2),q=>drawSemi(s,q.x,q.y+20,.9,'joy',{sprout:false})].forEach((f,k)=>{const q=P(k);el('circle',{cx:q.x,cy:q.y,r:72,fill:'#fff',filter:'url(#soft)'},s);f(q);});
       drawSemi(s,500,410,1.5,'happy');},
+    puzle:s=>{scenery(s,{gy:860,hills:false});const k=1.25,BX=330,BY=60;const b=el('g',{transform:`translate(${BX},${BY}) scale(${k})`},s);
+      el('rect',{x:-16,y:-16,width:PZ.W+32,height:PZ.H*4+32,rx:24,fill:'#fff',opacity:.6},b);const uid='lp'+Math.random().toString(36).slice(2,6);
+      [0,1,3].forEach((i,n)=>{const cp=el('clipPath',{id:uid+i},s);el('path',{d:pzShape(i)},cp);const off=el('g',{transform:n===2?`translate(${210},${PZ.H*i-40}) rotate(9)`:`translate(0,${PZ.H*i})`},b);el('path',{d:pzShape(i),fill:'#fff',filter:'url(#soft)'},off);const a=el('g',{'clip-path':`url(#${uid+i})`},off);drawPuzzleArt(el('g',{transform:`translate(0,${-i*PZ.H})`},a));el('path',{d:pzShape(i),fill:'none',stroke:'#fff','stroke-width':5},off);});
+      el('path',{d:pzShape(2),transform:`translate(0,${PZ.H*2})`,fill:'none',stroke:'#7FB98A','stroke-width':3,'stroke-dasharray':'9 8'},b);},
     juego:s=>{scenery(s,{gy:660});el('path',{d:'M380,560 L620,560 L590,720 L410,720Z',fill:'url(#gPot)',stroke:'#9A4A26','stroke-width':4},s);el('rect',{x:360,y:530,width:280,height:44,rx:14,fill:'url(#gPot)',stroke:'#9A4A26','stroke-width':4},s);drawPlant(s,{x:500,gy:540,h:230,n:6,ls:.9});
       [['sun',190,250],['drop',800,250],['icecream',170,500],['wind',830,500]].forEach(([ic,x,y],i)=>{const g=el('g',{transform:`translate(${x-60},${y-60})`},s);el('rect',{width:120,height:120,rx:30,fill:'#fff',filter:'url(#soft)'},g);const ii=icon(ic,96);ii.setAttribute('x',12);ii.setAttribute('y',12);g.append(ii);if(i===2)el('path',{d:'M20,20 L100,100 M100,20 L20,100',stroke:'#E5484D','stroke-width':10,'stroke-linecap':'round',opacity:.85},g);});}
   };
@@ -1960,6 +2019,7 @@ $('brand').prepend(semiIcon(40,'happy'));
     ['fruto','Del fruto a la semilla','La flor se hace manzana; la abren y plantan las pepitas.','1 min','drag'],
     ['frutos','¿Qué fruto da cada planta?','Manzano, naranjo, tomatera y fresal.','1 min','drag'],
     ['ciclo','El ciclo de la vida','Repasan las seis fases en un círculo que no se acaba.','1 min','tap'],
+    ['puzle','Arma la flor','Un puzle de repaso: ordenan de arriba a abajo la flor, las hojas, el tallo y la raíz.','1 min','drag'],
     ['juego','Juego final','Eligen lo que necesita una planta, ¡con trampas!','30 s','tap']];
   const card=$('lxCard'),dash=$('lxDash'),howEl=$('lxHow'),ol=$('lxSteps');
   const layers=STEPS.map(([k])=>{const s=newSvg(card,V,'xMidYMid slice');s.classList.add('sc');scenes[k](s);card.insertBefore(s,dash);return s;});
