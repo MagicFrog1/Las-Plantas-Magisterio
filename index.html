@@ -273,6 +273,11 @@ body.calm [data-rv]{opacity:1;transform:none}
 .dot.active{background:var(--sun);border-color:var(--sun-d);transform:scale(1.18)}
 .icon-btn{width:48px;height:48px;border-radius:50%;border:none;background:#fff;font-size:22px;cursor:pointer;box-shadow:0 4px 0 var(--line)}
 main{display:grid;grid-template-columns:minmax(300px,1fr) 2.45fr;gap:14px;min-height:0;position:relative}
+.panel{scrollbar-width:thin;scrollbar-color:#B9E3A6 transparent;scrollbar-gutter:stable}
+.panel::-webkit-scrollbar{width:10px}.panel::-webkit-scrollbar-track{background:transparent;margin:22px 0}
+.panel::-webkit-scrollbar-thumb{background:#C8EBB6;border-radius:999px;border:3px solid #fff}.panel::-webkit-scrollbar-thumb:hover{background:#8BD45E}
+.panel::-webkit-scrollbar-button{display:none;height:0}
+body.hc .panel{scrollbar-color:#1E5A36 transparent}body.hc .panel::-webkit-scrollbar-thumb{background:#1E5A36}
 .panel{background:#fff;border-radius:30px;padding:22px 24px;box-shadow:0 6px 0 var(--line),0 14px 30px rgba(30,90,54,.08);display:flex;flex-direction:column;gap:14px;overflow:auto;min-height:0}
 .step{font-family:'Baloo 2',system-ui,sans-serif;font-weight:700;font-size:17px;color:#6FA868}
 .panel h1{font-size:clamp(30px,3vw,44px);margin:0;line-height:1;font-weight:800}
@@ -1714,8 +1719,8 @@ function sceneFinal(sc,ctx){
   const m=el('g',{transform:'translate(500,210)'},svg);const mi=el('g',{class:'popin'},m);
   el('path',{d:'M-46,40 L-70,140 L-40,124 L-22,150 L-4,60Z',fill:'#4DABF7',stroke:'#1C7ED6','stroke-width':3},mi);el('path',{d:'M46,40 L70,140 L40,124 L22,150 L4,60Z',fill:'#FF6B6B',stroke:'#E03131','stroke-width':3},mi);
   el('circle',{r:86,fill:'url(#gGold)',stroke:'#D49A00','stroke-width':5,filter:'url(#soft)'},mi);el('circle',{r:70,fill:'#FFF6D0',stroke:'#F2C94C','stroke-width':3},mi);
-  const t1=el('text',{y:-14,'text-anchor':'middle','font-size':26,'font-weight':800,fill:'#9A6B00'},mi);t1.textContent='Pequeño';
-  const t2=el('text',{y:14,'text-anchor':'middle','font-size':26,'font-weight':800,fill:'#9A6B00'},mi);t2.textContent='jardinero';
+  const t1=el('text',{y:-14,'text-anchor':'middle','font-size':24,'font-weight':800,fill:'#9A6B00'},mi);t1.textContent='Pequeños';
+  const t2=el('text',{y:14,'text-anchor':'middle','font-size':23,'font-weight':800,fill:'#9A6B00'},mi);t2.textContent='jardineros';
   [-28,0,28].forEach(x=>el('path',{d:STAR_D,fill:'#FFC83A',stroke:'#E09A00','stroke-width':3,'stroke-linejoin':'round',transform:`translate(${x},44) scale(.42)`},mi));
   const seed=drawSemi(svg,500,420,1.6,'joy');seed.g.classList.add('bob');
   petalRain(ctx,svg,760,960,250,gy,.8);
@@ -1751,8 +1756,8 @@ const slides=[
    text:'**Nacer**, **crecer**, dar **flores**, dar **frutos**… ¡y vuelta a empezar! Toca cada dibujo o pulsa “Ver el ciclo”.'},
   {icon:'pot',step:'Paso 11 de 11',title:'¿Qué necesita una planta?',build:sceneQuiz,how:'tap',pictos:[['sun','sol'],['drop','agua'],['wind','aire'],['soil','tierra']],
    text:'Toca solo las cosas que **necesita** una planta para vivir. ¡Cuidado, que hay **trampas**!'},
-  {icon:'medal',step:'¡Fin!',title:'¡Eres un pequeño jardinero!',auto:true,build:sceneFinal,how:'look',pictos:[['medal','diploma'],['semi','Semi']],
-   text:'Has acompañado a Semi en todo su viaje: de **semilla** a **planta**, de **flor** a **fruto**… ¡y otra vez a semilla! ¡Enhorabuena!'}
+  {icon:'medal',step:'¡Fin!',title:'¡Sois pequeños jardineros!',auto:true,build:sceneFinal,how:'look',pictos:[['medal','diploma'],['semi','Semi']],
+   text:'Habéis acompañado a Semi en todo su viaje: de **semilla** a **planta**, de **flor** a **fruto**… ¡y otra vez a semilla! ¡Enhorabuena!'}
 ];
 const HOW={tap:{i:'hand',t:'Toca'},drag:{i:'drag',t:'Arrastra, o toca y coloca'},move:{i:'move',t:'Mueve el dedo'},look:{i:'eye',t:'Mira y escucha'}};
 function md(t){return t.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');}
