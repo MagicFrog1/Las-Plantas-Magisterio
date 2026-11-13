@@ -1109,8 +1109,9 @@ function makeBee(p,s=1){
 function handHint(p,x,y,label){const o=el('g',{transform:`translate(${x},${y})`,'pointer-events':'none'},p);const i=el('g',{class:'bob'},o);
   if(label){const w=label.length*11+40;el('rect',{x:-w/2,y:-92,width:w,height:40,rx:20,fill:'#fff',filter:'url(#soft)'},i);const t=el('text',{x:0,y:-64,'text-anchor':'middle','font-size':21,'font-weight':700,fill:'#1E5A36'},i);t.textContent=label;}
   drawHand(i,0,-34,.85);return o;}
-function bubble(p,x,y,text){const o=el('g',{transform:`translate(${x},${y})`,'pointer-events':'none'},p);const i=el('g',{class:'popin'},o);const w=Math.max(120,text.length*16+40);
-  el('rect',{x:-w/2,y:-34,width:w,height:60,rx:30,fill:'#fff',filter:'url(#soft)'},i);el('path',{d:'M-30,24 L-46,48 L-10,24Z',fill:'#fff'},i);
+function bubble(p,x,y,text,tail='bl'){const o=el('g',{transform:`translate(${x},${y})`,'pointer-events':'none'},p);const i=el('g',{class:'popin'},o);const w=Math.max(120,text.length*16+40);
+  const tp=tail==='left'?`M${-w/2+14},${-12} L${-w/2-24},${14} L${-w/2+24},${12}Z`:'M-30,24 L-46,48 L-10,24Z';
+  el('path',{d:tp,fill:'#fff',filter:'url(#soft)'},i);el('rect',{x:-w/2,y:-34,width:w,height:60,rx:30,fill:'#fff',filter:'url(#soft)'},i);el('path',{d:tp,fill:'#fff'},i);
   const t=el('text',{x:0,y:7,'text-anchor':'middle','font-size':28,'font-weight':700,fill:'#1E5A36'},i);t.textContent=text;return o;}
 function draggable(svg,g,home,{onDrop,onStart}={}){
   let pos={...home},drag=null,locked=false,ring=null;
@@ -1236,7 +1237,7 @@ function sceneIntro(sc,ctx){
   drawDaisy(svg,90,505,'#fff');drawDaisy(svg,560,560,'#FFB3CB',50,.42);drawDaisy(svg,930,540,'#FFE066',50,.42);
   drawPlant(svg,{x:170,gy:490,h:96,n:4,ls:.55});
   const seed=drawSemi(svg,350,420,2.2,'happy');seed.g.classList.add('bob');
-  bubble(svg,380,262,'¡Hola!');
+  bubble(svg,505,338,'¡Hola!','left');
   petalRain(ctx,svg,640,900,250,470,.8);
   const bee=makeBee(svg,.85);
   ctx.loop((dt,t)=>{const x=560+Math.cos(t*.8)*170,y=210+Math.sin(t*1.6)*50;bee.place(x,y,-Math.sin(t*.8)<0?-1:1);});
