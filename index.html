@@ -443,6 +443,23 @@ body.hc .say .bub{background:#fff;border-color:#000}
 body.hc .nav,body.hc .listen,body.hc .help,body.hc .wbtn,body.hc .picto,body.hc .dot,body.hc .home,body.hc .icon-btn,body.hc .card,body.hc .how{outline:3px solid #000;outline-offset:0}
 body.hc .panel p b{background:#FFE000}
 body.calm *,body.calm *::before{animation:none!important;transition:none!important}
+.mision{display:none;align-items:center;gap:10px;width:100%;background:#FFFBEA;border:3px solid #FFC83A;border-radius:999px;padding:6px 20px 6px 6px;font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:22px;line-height:1.05;color:#1E5A36;box-shadow:0 4px 0 #F0B400;border-radius:22px}
+body.focus .mision{display:flex}body.focus .mision[hidden]{display:none}body.focus .how{display:none}
+.mision .mi{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#FFF4C8}
+.mision .mi svg{width:32px!important;height:32px!important}
+.mision small{display:block;font-size:13px;color:#B07A00;letter-spacing:.02em}
+.mision.ok{border-color:#3E9B4A;box-shadow:0 6px 0 #2F7D3B,0 12px 22px -10px rgba(30,90,54,.5)}.mision.ok .mi{background:#E3F6DC}.mision.ok small{color:#2F7D3B}
+body.focus .scene>svg{filter:saturate(.9)}
+
+.pausa{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(30,90,54,.55);backdrop-filter:blur(4px);padding:16px}
+.pcard{background:#fff;border-radius:34px;padding:26px 30px 24px;max-width:520px;width:100%;text-align:center;box-shadow:0 30px 60px -20px rgba(0,0,0,.4)}
+.pcard .pic svg{width:110px;height:110px}
+.pcard h2{margin:6px 0 6px;font-size:34px;color:#1E5A36}
+.pcard p{margin:0 0 16px;font-size:22px;line-height:1.35}
+.pring{--p:0;width:86px;height:86px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#3E9B4A calc(var(--p)*360deg),#E3F1DD 0)}
+.pring b{display:grid;place-items:center;width:66px;height:66px;border-radius:50%;background:#fff;font-family:'Baloo 2',system-ui,sans-serif;font-size:30px;color:#1E5A36}
+@media (max-width:700px){.mision{font-size:16px;padding:4px 14px 4px 4px}.mision .mi{width:34px;height:34px}.mision .mi svg{width:24px!important;height:24px!important}.mision small{font-size:11px}}
+@media (max-height:500px) and (orientation:landscape){.mision{font-size:14px;padding:3px 10px 3px 3px;border-width:2px}.mision .mi{width:28px;height:28px}.mision .mi svg{width:20px!important;height:20px!important}.mision small{font-size:10px}}
 body.talking .nav,body.talking .dot,body.talking .listen,body.talking .help,body.talking .picto,body.talking .wbtn,body.talking .bigstart,body.talking .card{pointer-events:none;opacity:.45;filter:saturate(.5);animation:none}
 .talk{display:none;align-items:center;gap:10px;font-family:'Baloo 2',system-ui,sans-serif;font-weight:700;font-size:18px;color:#8C2F55;background:#FFE3EC;border-radius:999px;padding:6px 16px 4px 12px;width:max-content}
 body.talking .talk{display:inline-flex}
@@ -659,6 +676,7 @@ body.talking .talk{display:inline-flex}
         <details><summary>¿Funciona en la pizarra digital?</summary><p>Sí. Está pensado para pantallas táctiles grandes, y también funciona en tablet, ordenador y móvil.</p></details>
         <details><summary>¿Cuánto dura?</summary><p>Unos 10 minutos entero. También se puede hacer por partes a lo largo de la semana: los puntos de arriba llevan a cualquier paso.</p></details>
         <details><summary>¿Y si no tenemos sonido?</summary><p>Se puede seguir con el texto, los pictogramas y los dibujos. En los ajustes se puede quitar la voz o hacerla más lenta.</p></details>
+        <details><summary>¿Sirve para niños con TDAH?</summary><p>Sí. En los ajustes está el «Modo atención»: muestra una sola misión a la vista en cada pantalla, quita animaciones que distraen y cada dos actividades propone una pausa corta para moverse.</p></details>
         <details><summary>¿Y si un niño no puede arrastrar?</summary><p>Puede tocar el objeto y luego tocar dónde va. Y el botón de ayuda enseña con una mano cómo se hace.</p></details>
         <details><summary>¿Para qué edad es?</summary><p>Para 5 años. Con 4 años funciona acompañando más de cerca, y en primero de Primaria sirve de repaso.</p></details>
       </div>
@@ -694,6 +712,7 @@ body.talking .talk{display:inline-flex}
     <section class="panel" id="panel" aria-live="polite">
       <div class="step" id="step"></div>
       <div class="how" id="how"></div>
+      <div class="mision" id="mision" role="status"><span class="mi"></span><span class="mt"></span></div>
       <h1 id="title"></h1>
       <p id="text"></p>
       <div class="pictos" id="pictos"></div>
@@ -718,6 +737,7 @@ body.talking .talk{display:inline-flex}
     <div class="opt"><div><h3>Velocidad de la voz</h3><p>Más despacio ayuda a entender mejor.</p></div><div class="seg" data-k="slow"><button data-v="0" data-i="rabbit">Normal</button><button data-v="1" data-i="turtle">Despacio</button></div></div>
     <div class="opt"><div><h3>Tamaño de la letra</h3><p>Textos más grandes en el panel.</p></div><div class="seg" data-k="big"><button data-v="0" data-i="textsize">Normal</button><button data-v="1" data-i="textsizeBig">Grande</button></div></div>
     <div class="opt"><div><h3>Más contraste</h3><p>Bordes y textos más marcados.</p></div><div class="seg" data-k="hc"><button data-v="0" data-i="contrastOff">No</button><button data-v="1" data-i="contrast">Sí</button></div></div>
+    <div class="opt focusopt"><div><h3>Modo atención (TDAH)</h3><p>Una sola misión a la vista, menos movimiento y pausas cortas para moverse.</p></div><div class="seg" data-k="focus"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="bulb">Sí</button></div></div>
     <div class="opt"><div><h3>Menos movimiento</h3><p>Quita animaciones que puedan distraer.</p></div><div class="seg" data-k="calm"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="calm">Sí</button></div></div>
     <button class="btn big" id="setClose" style="margin-top:14px;width:100%">Listo</button>
   </div>
@@ -751,7 +771,7 @@ function addGrain(box){const g=h('div',{class:'grain'},box);if(GRAIN)g.style.bac
    Sonido (WebAudio) y voz
    ========================================================= */
 let actx=null,soundOn=true,started=false,picked=null;
-const SET={voice:true,fx:true,slow:false,big:false,hc:false,calm:false};
+const SET={voice:true,fx:true,slow:false,big:false,hc:false,calm:false,focus:false};
 try{Object.assign(SET,JSON.parse(localStorage.getItem('semiAjustes')||'{}'));}catch(e){}
 function ac(){if(!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(actx&&actx.state==='suspended')actx.resume();return actx;}
 /* Efectos de sonido: sintetizados, suaves, con eco ligero. Se activan y desactivan aparte de la voz. */
@@ -846,7 +866,7 @@ function makeCtx(){
   ctx.say=(s,{ok=false,speakIt=true,onend}={})=>{const b=$('say');b.hidden=!s;$('sayTxt').textContent=s||'';b.classList.toggle('ok',ok);restart(b,'bump');if(s)requestAnimationFrame(()=>{const pn=$('panel');pn.scrollTo({top:pn.scrollHeight,behavior:'smooth'});});
     if(s&&speakIt)speak(s,onend?()=>{if(current===ctx)onend();}:null);};
   ctx.done=msg=>{if(ctx.completed)return;ctx.completed=true;doneSet.add(idx);updateProgress();sfx.win();confetti();
-    if(msg)ctx.say(msg,{ok:true});$('next').classList.add('ready');};
+    if(msg)ctx.say(msg,{ok:true});$('next').classList.add('ready');if(ctx.mision)missionDone(ctx.mision);};
   return ctx;
 }
 bgCtx.loop=f=>{bgCtx.loops.push(f);return()=>{const i=bgCtx.loops.indexOf(f);if(i>=0)bgCtx.loops.splice(i,1);};};
@@ -1803,6 +1823,7 @@ function sceneFinal(sc,ctx){
 /* =========================================================
    Contenido de las pantallas
    ========================================================= */
+const MISION={"sceneSeed": ["hand", "Toca la nube"], "sceneRoots": ["drag", "Lleva la raíz hasta el agua"], "sceneParts": ["hand", "Toca cada parte de la planta"], "sceneFeed": ["drag", "Lleva el sol, el agua, el aire y la tierra a la planta"], "sceneWeather": ["hand", "Toca un tiempo: sol, lluvia, nieve o calor"], "sceneGrow": ["hand", "Toca el sol"], "sceneBee": ["move", "Lleva la abeja de un manzano al otro"], "sceneFruit": ["hand", "Toca la manzana y entierra las semillas"], "sceneMatch": ["drag", "Lleva cada fruto a su planta"], "sceneCycle": ["hand", "Toca cada paso del círculo"], "scenePuzzle": ["drag", "Ordena las piezas de arriba a abajo"], "sceneQuiz": ["hand", "Toca lo que necesita una planta"]};
 const slides=[
   {icon:'semi',step:'Bienvenida',title:'El viaje de Semi',auto:true,build:sceneIntro,how:'look',pictos:[['semi','Semi'],['apple','manzana'],['tree','manzano']],
    text:'¡Hola! Soy **Semi**, una semillita. ¿Me acompañas a descubrir cómo me convierto en una **planta**? Pulsa “¡Empezar!”.'},
@@ -1854,18 +1875,28 @@ function go(i){
   current=makeCtx();
   if(s.auto){current.completed=true;doneSet.add(i);}
   s.build(sc,current);current.svg=current.svg||sc.querySelector('svg');addGrain(sc);updateProgress();
+  const ms=MISION[s.build.name],m=$('mision');m.classList.remove('ok');m.hidden=!ms;if(ms){const mi=m.querySelector('.mi');mi.innerHTML='';mi.append(icon(ms[0],30));m.querySelector('.mt').innerHTML='<small>Tu misión</small>'+ms[1];current.mision=m;}
   $('prev').style.visibility=i?'visible':'hidden';
   $('next').style.visibility=i===0?'hidden':'visible';
   $('next').classList.toggle('ready',current.completed);
   if(i===slides.length-1)lab($('next'),'replay','Otra vez');else lab($('next'),'arrowR','Siguiente',true);
   if(started)setTimeout(()=>{if(idx===i)speak(s.title+'. '+s.text);},350);
 }
+function missionDone(m){m.classList.add('ok');const mi=m.querySelector('.mi');mi.innerHTML='';mi.append(icon('star',30));m.querySelector('.mt').innerHTML='<small>¡Misión cumplida!</small>Pulsa «Siguiente»';}
+/* Pausa de movimiento (modo atención): cada dos actividades terminadas */
+const PAUSAS=[['sprout','Agáchate como una semilla… ¡y crece despacito hasta estirar los brazos!'],['wind','Mueve los brazos como las hojas con el viento.'],['bee','Vuela como una abeja por tu sitio: ¡bzzz!'],['sun','Estírate hacia el sol de puntillas y respira hondo.']];
+let pauseCount=0,sincePause=0;
+function movementPause(then){const ov=h('div',{class:'pausa',role:'dialog','aria-label':'Pausa de movimiento'},document.body);const card=h('div',{class:'pcard'},ov);
+  const P=PAUSAS[pauseCount++%PAUSAS.length];const ic=h('div',{class:'pic'},card);ic.append(icon(P[0],110));h('h2',{},card,'¡Pausa de movimiento!');h('p',{},card,P[1]);
+  const ring=h('div',{class:'pring'},card);const n=h('b',{},ring,'12');const ok=h('button',{class:'btn big'},card,'¡Ya está!');sfx.chime();
+  let left=12;const end=()=>{clearInterval(t);ov.remove();then();};const t=setInterval(()=>{left--;n.textContent=left;ring.style.setProperty('--p',(12-left)/12);if(left<=0)end();},1000);ok.onclick=()=>{sfx.tap();end();};}
 function play(){document.body.classList.add('playing');window.scrollTo(0,0);started=true;ac();go(0);}
 function home(){if(current){current.timers.forEach(clearTimeout);current.loops.length=0;}stopSpeech();document.body.classList.remove('playing');}
 $('prev').onclick=()=>{sfx.tap();go(idx-1);};
-$('next').onclick=()=>{started=true;ac();sfx.tap();go(idx===slides.length-1?1:idx+1);};
+$('next').onclick=()=>{started=true;ac();sfx.tap();const to=idx===slides.length-1?1:idx+1;
+  if(SET.focus&&current&&current.completed&&idx>0&&idx<slides.length-1&&++sincePause>=2){sincePause=0;stopSpeech();movementPause(()=>go(to));}else go(to);};
 $('listen').onclick=()=>{started=true;ac();const s=slides[idx];speak(s.title+'. '+s.text);};
-function applySet(){document.body.classList.toggle('bigtext',!!SET.big);document.body.classList.toggle('hc',!!SET.hc);document.body.classList.toggle('calm',!!SET.calm);soundOn=!!SET.voice;
+function applySet(){document.body.classList.toggle('bigtext',!!SET.big);document.body.classList.toggle('hc',!!SET.hc);document.body.classList.toggle('calm',!!(SET.calm||SET.focus));document.body.classList.toggle('focus',!!SET.focus);soundOn=!!SET.voice;
   const sb=$('soundBtn');sb.innerHTML='';sb.append(icon(soundOn?'speaker':'speakerOff',30));sb.setAttribute('aria-pressed',soundOn);const fb=$('fxBtn');fb.innerHTML='';fb.append(icon(fxOn()?'note':'noteOff',30));fb.setAttribute('aria-pressed',fxOn());
   document.querySelectorAll('.seg').forEach(g=>g.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(!!SET[g.dataset.k]===(b.dataset.v==='1')))));
   try{localStorage.setItem('semiAjustes',JSON.stringify(SET));}catch(e){}}
