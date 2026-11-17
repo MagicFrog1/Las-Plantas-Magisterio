@@ -865,8 +865,8 @@ function makeCtx(){
     const w=h('div',{class:'prog',role:'img','aria-label':`${n} de ${t}`},st);for(let i=0;i<t;i++){const ic=icon(a,34);ic.classList.add(i<n?'on':'off');if(i===n-1&&n>(ctx._last||0)){ic.classList.add('new');setTimeout(()=>sfx.chime(),120);}w.append(ic);}ctx._last=n;};
   ctx.say=(s,{ok=false,speakIt=true,onend}={})=>{const b=$('say');b.hidden=!s;$('sayTxt').textContent=s||'';b.classList.toggle('ok',ok);restart(b,'bump');if(s)requestAnimationFrame(()=>{const pn=$('panel');pn.scrollTo({top:pn.scrollHeight,behavior:'smooth'});});
     if(s&&speakIt)speak(s,onend?()=>{if(current===ctx)onend();}:null);};
-  ctx.done=msg=>{if(ctx.completed)return;ctx.completed=true;doneSet.add(idx);updateProgress();sfx.win();confetti();
-    if(msg)ctx.say(msg,{ok:true});$('next').classList.add('ready');if(ctx.mision)missionDone(ctx.mision);};
+  ctx.markDone=()=>{if(ctx.completed)return;ctx.completed=true;const i=slides.indexOf(ctx.slide);doneSet.add(i>=0?i:idx);updateProgress();$('next').classList.add('ready');if(ctx.mision)missionDone(ctx.mision);};
+  ctx.done=msg=>{if(ctx._celebrated)return;ctx._celebrated=true;ctx.markDone();if(current!==ctx)return;sfx.win();confetti();if(msg)ctx.say(msg,{ok:true});};
   return ctx;
 }
 bgCtx.loop=f=>{bgCtx.loops.push(f);return()=>{const i=bgCtx.loops.indexOf(f);if(i>=0)bgCtx.loops.splice(i,1);};};
@@ -1443,7 +1443,7 @@ function sceneFeed(sc,ctx){
     g.style.transition='transform .5s ease-in, opacity .5s';g.style.transform='translate(500px,330px) scale(.1)';g.style.opacity=0;ctx.after(550,()=>g.remove());
     sfx.pop();it.fx();ctx.say(it.msg);
     ctx.after(1200,()=>{fed++;ctx.status('leaf',fed,4);desat.setAttribute('values',(.2+.8*fed/4).toFixed(2));P.outer.style.transform=`scale(${.86+fed*.08})`;P.setDroop(1-fed/4);sfx.good();
-      if(fed===4){P.outer.removeAttribute('filter');ctx.after(3800,()=>{oxygen();ctx.done('¡La planta ya tiene su comida y está feliz! Y mientras la fabrica, nos regala el aire limpio que respiramos. ¡Gracias, planta!');});}});
+      if(fed===4){P.outer.removeAttribute('filter');ctx.markDone();ctx.after(3800,()=>{oxygen();ctx.done('¡La planta ya tiene su comida y está feliz! Y mientras la fabrica, nos regala el aire limpio que respiramos. ¡Gracias, planta!');});}});
   }
   function oxygen(){const bubs=[];let acc=0;
     ctx.loop(dt=>{acc+=dt;if(acc>.45){acc=0;const lp=leafPts()[Math.random()*4|0];const g=el('g',{},fxG);el('circle',{r:18,fill:'#E9F8FF',stroke:'#7CC8F5','stroke-width':2.5},g);const t=el('text',{y:6,'text-anchor':'middle','font-size':15,'font-weight':800,fill:'#2A8DE0'},g);t.textContent='O₂';
@@ -1477,7 +1477,7 @@ function sceneWeather(sc,ctx){
   const bar=h('div',{class:'wbar'},sc);
   Object.keys(ST).forEach(k=>{const b=h('button',{class:'wbtn'},bar);b.append(icon(ST[k].e,40));b.append(ST[k].n);btns[k]=b;
     b.onclick=()=>{({sol:()=>sfx.sparkle(0,6),lluvia:()=>sfx.rain(),nieve:()=>{sfx.chime();noise(.8,.04,0,{f0:5000,q:.3,att:.2});},calor:()=>noise(.6,.05,0,{f0:700,f1:300,q:.5})}[k]||sfx.tap)();apply(k,true);if(!tried.has(k)){tried.add(k);b.classList.add('tried');ctx.status('weather',tried.size,4);
-      if(tried.size===4)ctx.after(6500,()=>ctx.done('¡Muy bien! A las plantas les gusta el sol y la lluvia. Cuando hace mucho frío o mucho calor, lo pasan mal.'));}};});
+      if(tried.size===4){ctx.markDone();}if(tried.size===4)ctx.after(6500,()=>ctx.done('¡Muy bien! A las plantas les gusta el sol y la lluvia. Cuando hace mucho frío o mucho calor, lo pasan mal.'));}};});
   apply('sol',false);ctx.status('weather',0,4);
   ctx.hint=()=>{const k=Object.keys(ST).find(q=>!tried.has(q));if(k)restart(btns[k],'wiggle');};
   const parts=[];let acc=0;
@@ -1517,7 +1517,7 @@ function sceneGrow(sc,ctx){
     S.sky.setAttribute('fill','url(#gHot)');ctx.after(380,()=>S.sky.setAttribute('fill','url(#gSky)'));
     const old=cur;old.style.opacity=0;old.style.transform='scale(1.1)';ctx.after(500,()=>old.remove());
     cur=build(stage);lt.textContent=years[stage];ctx.status('tree',stage,3);
-    if(stage===3){petalRain(ctx,svg,330,640,140,gy,.7);ctx.after(1200,()=>ctx.done('¡Semi ya es un manzano! En primavera se llena de flores, y de esas flores saldrán las manzanas.'));}
+    if(stage===3){petalRain(ctx,svg,330,640,140,gy,.7);ctx.markDone();ctx.after(1200,()=>ctx.done('¡Semi ya es un manzano! En primavera se llena de flores, y de esas flores saldrán las manzanas.'));}
     else ctx.say(stage===1?'¡Ha pasado un año! La plantita ya es un arbolito.':'¡Cómo crece! Toca otra vez el sol.');
     ctx.after(900,()=>busy=false);
   });
@@ -1567,7 +1567,7 @@ function sceneBee(sc,ctx){
     else if(count===n-2)ctx.say('¡Genial!');
     else if(count===n-1)ctx.say('¡Ya casi está!');
     else if(count<n)ctx.say('¡Otra más!');
-    else ctx.after(600,()=>ctx.done('¡Bravo! La abeja ha polinizado todas las flores. Ahora las flores podrán convertirse en frutos con semillas dentro.'));
+    else{ctx.markDone();ctx.after(600,()=>ctx.done('¡Bravo! La abeja ha polinizado todas las flores. Ahora las flores podrán convertirse en frutos con semillas dentro.'));}
   }
 }
 
@@ -1630,7 +1630,7 @@ function sceneFruit(sc,ctx){
       const st=el('path',{d,stroke:'#2E7D32','stroke-width':7,fill:'none','stroke-linecap':'round',pathLength:1,'stroke-dasharray':'1 1','stroke-dashoffset':1},g);
       tween(ctx,.8,e=>st.setAttribute('stroke-dashoffset',1-e),()=>{const L=[leaf(g,{x:hl.x,y:hl.y-88,a:-35,s:.01}),leaf(g,{x:hl.x,y:hl.y-88,a:35,s:.01,flip:true,dark:true})];
         tween(ctx,.5,e=>{const k=.01+.42*e;L[0].setAttribute('transform',`translate(${hl.x},${hl.y-88}) rotate(-35) scale(${k})`);L[1].setAttribute('transform',`translate(${hl.x},${hl.y-88}) rotate(35) scale(${-k},${k})`);});sfx.tap();});}));
-    ctx.after(2200,()=>ctx.done('¡Las semillas ya están bajo la tierra y están naciendo plantas nuevas! El viaje vuelve a empezar.'));}
+    ctx.markDone();ctx.after(2200,()=>ctx.done('¡Las semillas ya están bajo la tierra y están naciendo plantas nuevas! El viaje vuelve a empezar.'));}
 }
 
 /* 9 · ¿Qué fruto da cada planta? */
@@ -1666,7 +1666,7 @@ function sceneMatch(sc,ctx){
       if(bed.k!==k){sfx.bad();ctx.say('¡Uy! Esa planta no da ese fruto. ¡Prueba otra vez!');return false;}
       const a=bed.attach[0];g.style.transition='transform .45s cubic-bezier(.3,1.5,.5,1)';g.style.transform=`translate(${a.x}px,${a.y}px) scale(.62)`;
       fobj.done=true;sparkBurst(ctx,svg,a.x,a.y);sfx.good();ok++;ctx.status('apple',ok,4);
-      if(ok<4)ctx.say(bed.the);else ctx.say(bed.the,{onend:()=>ctx.done('¡Muy bien! Todos estos frutos nacen de una flor y guardan semillas dentro.')});
+      if(ok<4)ctx.say(bed.the);else{ctx.markDone();ctx.after(9000,()=>ctx.done('¡Muy bien! Todos estos frutos nacen de una flor y guardan semillas dentro.'));}if(ok>=4)ctx.say(bed.the,{onend:()=>ctx.done('¡Muy bien! Todos estos frutos nacen de una flor y guardan semillas dentro.')});
       return true;}});
   });
   hand=handHint(svg,xs[0]+44,650,'¡Llévalo a su planta!');
@@ -1717,7 +1717,7 @@ function scenePuzzle(sc,ctx){
       const t=el('g',{transform:`translate(${BX+PZ.W+52},${q.y})`,class:'popin'},tags);el('rect',{x:-6,y:-20,width:96,height:40,rx:20,fill:'#fff',stroke:'#C9E6F8','stroke-width':3},t);
       const tx=el('text',{x:42,y:9,'text-anchor':'middle','font-size':23,'font-weight':800,fill:'#1E5A36'},t);tx.textContent=NAMES[i];
       if(ok<N)ctx.say(['¡Genial!','¡Otra más!','¡Ya casi está!'][ok-1]);
-      else{ctx.after(500,()=>{rot.style.transform='';const all=el('g',{class:'bob','pointer-events':'none'},svg);sparkBurst(ctx,svg,slots[0].x,slots[0].y);sfx.win();
+      else{ctx.markDone();ctx.after(500,()=>{rot.style.transform='';const all=el('g',{class:'bob','pointer-events':'none'},svg);sparkBurst(ctx,svg,slots[0].x,slots[0].y);sfx.win();
         ctx.done('¡Lo has conseguido! Arriba la flor, luego las hojas, el tallo y, abajo, la raíz.');});}
       return true;}});
   }
@@ -1796,7 +1796,7 @@ function sceneQuiz(sc,ctx){
   ctx.hint=()=>{const c=cards.find(q=>q.ok&&!q.chosen);if(c&&c.el)restart(c.el,'wrong');};
   cards.forEach(c=>{const d=h('div',{class:'card',role:'button',tabindex:0,'aria-label':c.n},grid,`<div class="emo"></div><div class="lbl">${c.n}</div>`);d.querySelector('.emo').append(icon(c.e,110));c.el=d;
     const act=()=>{if(c.ok){if(c.chosen)return;c.chosen=true;d.classList.add('right');right++;stage=right;drawStage();sfx.good();ctx.status('sprout',right,4);
-        if(right<4)ctx.say(c.m);else ctx.say(c.m,{onend:()=>ctx.done('¡Perfecto! Las plantas necesitan sol, agua, aire y tierra. ¡Ya lo sabes todo!')});}
+        if(right<4)ctx.say(c.m);else{ctx.markDone();ctx.after(9000,()=>ctx.done('¡Perfecto! Las plantas necesitan sol, agua, aire y tierra. ¡Ya lo sabes todo!'));}if(right>=4)ctx.say(c.m,{onend:()=>ctx.done('¡Perfecto! Las plantas necesitan sol, agua, aire y tierra. ¡Ya lo sabes todo!')});}
       else{sfx.bad();restart(d,'wrong');ctx.after(700,()=>d.classList.remove('wrong'));ctx.say(c.m);}};
     d.addEventListener('pointerdown',act);d.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act();}});});
 }
@@ -1872,7 +1872,7 @@ function go(i){
   preload((s.pictos||[]).map(x=>x[1]));
   const pc=$('pictos');pc.innerHTML='';(s.pictos||[]).forEach(([ic,w])=>{const b=h('button',{class:'picto','aria-label':'Escuchar: '+w},pc);b.append(icon(ic,50));h('span',{},b).textContent=w;b.onclick=()=>{ac();sfx.tap();speak(w);};});
   const sc=$('scene');sc.innerHTML='';restart(sc,'enter');
-  current=makeCtx();
+  current=makeCtx();current.slide=s;
   if(s.auto){current.completed=true;doneSet.add(i);}
   s.build(sc,current);current.svg=current.svg||sc.querySelector('svg');addGrain(sc);updateProgress();
   const ms=MISION[s.build.name],m=$('mision');m.classList.remove('ok');m.hidden=!ms;if(ms){const mi=m.querySelector('.mi');mi.innerHTML='';mi.append(icon(ms[0],30));m.querySelector('.mt').innerHTML='<small>Tu misión</small>'+ms[1];current.mision=m;}
