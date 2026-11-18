@@ -413,9 +413,10 @@ footer.ctrl{display:flex;justify-content:space-between;align-items:center;gap:10
 .seg button{border:none;border-radius:18px;background:#F6F2F7;padding:6px 10px 5px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:'Baloo 2',system-ui,sans-serif;font-weight:700;font-size:16px;color:#5B3A2E;cursor:pointer;min-width:86px;box-shadow:0 4px 0 #E6DDE9}
 .seg button svg{width:38px;height:38px}
 .seg button[aria-pressed="true"]{background:#FFE07A;box-shadow:0 4px 0 #E0B000}
-.haloP{animation:haloP 1.5s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
-@keyframes haloP{50%{transform:scale(1.07);opacity:.7}}
-body.calm .haloP{animation:none}
+.breathe{animation:breathe 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes breathe{50%{transform:translateY(-6px) scale(1.04)}}
+.drip{animation:drip 1.6s ease-in infinite}@keyframes drip{0%{transform:translateY(-8px);opacity:0}25%{opacity:1}100%{transform:translateY(26px);opacity:0}}
+body.calm .breathe,body.calm .drip{animation:none}
 .picto.saying{animation:pictoSay .5s cubic-bezier(.3,1.6,.5,1)}@keyframes pictoSay{40%{transform:scale(1.12) rotate(-4deg)}}
 .twinkle{animation:tw 2.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 @keyframes tw{0%,100%{opacity:.25;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
@@ -507,7 +508,7 @@ body.talking .talk{display:inline-flex}
 
 @media (orientation:portrait),(max-width:900px) and (min-height:501px){
   main{grid-template-columns:1fr;grid-template-rows:auto 1fr}
-  .panel{max-height:40vh;padding:16px 18px;gap:10px}
+  .panel{max-height:52vh;padding:16px 18px;gap:10px}
   .dot{width:28px;height:28px;font-size:13px}
   .home span{display:none}
   .quiz{grid-template-columns:1fr;grid-template-rows:minmax(110px,30%) 1fr}
@@ -699,7 +700,7 @@ body.talking .talk{display:inline-flex}
       </div>
       <div class="lx-three" data-rv>
         <div><span data-ic="eye"></span><h3>Ver y oír</h3><p>Voz que lee cada pantalla, pictogramas que suenan y palabras clave resaltadas.</p></div>
-        <div><span data-ic="hand"></span><h3>Hacer</h3><p>Un dibujo dice si hay que tocar, arrastrar o mover, y un vídeo corto enseña con un ejemplo cómo se hace. Quien no pueda arrastrar, toca y coloca.</p></div>
+        <div><span data-ic="hand"></span><h3>Hacer</h3><p>Un dibujo dice si hay que tocar, arrastrar o mover, y el botón «Ver ejemplo» abre un vídeo corto que enseña cómo se hace. Quien no pueda arrastrar, toca y coloca.</p></div>
         <div><span data-ic="heart"></span><h3>Motivarse</h3><p>Sin tiempo límite ni fallos que resten. El progreso se ve con dibujos que se llenan.</p></div>
       </div>
     </div>
@@ -774,7 +775,7 @@ body.talking .talk{display:inline-flex}
     <div class="opt"><div><h3>Velocidad de la voz</h3><p>Más despacio ayuda a entender mejor.</p></div><div class="seg" data-k="slow"><button data-v="0" data-i="rabbit">Normal</button><button data-v="1" data-i="turtle">Despacio</button></div></div>
     <div class="opt"><div><h3>Tamaño de la letra</h3><p>Textos más grandes en el panel.</p></div><div class="seg" data-k="big"><button data-v="0" data-i="textsize">Normal</button><button data-v="1" data-i="textsizeBig">Grande</button></div></div>
     <div class="opt"><div><h3>Más contraste</h3><p>Bordes y textos más marcados.</p></div><div class="seg" data-k="hc"><button data-v="0" data-i="contrastOff">No</button><button data-v="1" data-i="contrast">Sí</button></div></div>
-    <div class="opt"><div><h3>Vídeo de ejemplo al empezar</h3><p>Autoinstrucción: antes de cada actividad sale un vídeo corto que enseña paso a paso cómo se hace. Siempre se puede volver a ver con «Ver ejemplo».</p></div><div class="seg" data-k="demo"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="eye">Sí</button></div></div>
+    <div class="opt"><div><h3>Botón «Ver ejemplo»</h3><p>Autoinstrucción: un botón abre un vídeo corto que enseña paso a paso cómo se hace cada actividad.</p></div><div class="seg" data-k="demo"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="eye">Sí</button></div></div>
     <div class="opt focusopt"><div><h3>Modo atención (TDAH)</h3><p>Una sola misión a la vista, menos movimiento y pausas cortas para moverse.</p></div><div class="seg" data-k="focus"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="bulb">Sí</button></div></div>
     <div class="opt"><div><h3>Menos movimiento</h3><p>Quita animaciones que puedan distraer.</p></div><div class="seg" data-k="calm"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="calm">Sí</button></div></div>
     <button class="btn big" id="setClose" style="margin-top:14px;width:100%">Listo</button>
@@ -1323,12 +1324,10 @@ function sceneSeed(sc,ctx){
   const seed=drawSemi(svg,500,430,1.9,'sleep',{sprout:false});
   const zz=el('g',{transform:'translate(552,378)','pointer-events':'none'},svg);const zt=el('text',{class:'zzz','font-size':32,'font-weight':800,fill:'#fff'},zz);zt.textContent='Z z z';
   const dropG=el('g',{},svg);
-  const halo=el('g',{'pointer-events':'none'},svg);const hg=el('radialGradient',{id:'gHalo'},el('defs',{},halo));
-  el('stop',{offset:'0','stop-color':'#FFF3A0','stop-opacity':1},hg);el('stop',{offset:'.75','stop-color':'#FFD84A','stop-opacity':.85},hg);el('stop',{offset:'1','stop-color':'#FFE066','stop-opacity':0},hg);
-  const hp=el('g',{class:'haloP'},halo);el('ellipse',{cx:497,cy:118,rx:190,ry:105,fill:'url(#gHalo)'},hp);
-  el('ellipse',{cx:497,cy:118,rx:172,ry:92,fill:'none',stroke:'#FFB000','stroke-width':9,'stroke-dasharray':'2 18','stroke-linecap':'round'},hp);
-  [[318,70],[676,64],[350,178],[650,176],[497,10]].forEach(([x,y],i)=>{const t=el('path',{d:'M0,-14 L4,-4 L14,0 L4,4 L0,14 L-4,4 L-14,0 L-4,-4Z',fill:'#FFB000',stroke:'#fff','stroke-width':2,transform:`translate(${x},${y}) scale(1.5)`},halo);t.classList.add('twinkle');t.style.animationDelay=(i*.35)+'s';});
-  const cl=cloudShape(svg,410,100,1.5);cl.g.classList.add('tappable');
+  const cw=el('g',{class:'breathe'},svg);const drip=el('g',{'pointer-events':'none'},cw);
+  [[455,182,0],[505,192,.5],[555,180,1]].forEach(([x,y,d])=>{const g=el('g',{transform:`translate(${x},${y})`},drip);const q=el('path',{d:DROP,fill:'#7CC7F5',stroke:'#3E9BDB','stroke-width':1,transform:'scale(1.15)'},el('g',{class:'drip'},g));q.parentNode.style.animationDelay=d+'s';});
+  const cl=cloudShape(cw,410,100,1.5);cl.g.classList.add('tappable');
+  cl.g.querySelectorAll('circle,ellipse').forEach(c=>{const f=c.getAttribute('fill');if(f==='#fff')c.setAttribute('fill','#D6E8F8');else if(f==='#CFE6F5')c.setAttribute('fill','#8FB6DA');});
   el('rect',{x:-40,y:-70,width:200,height:120,fill:'transparent'},cl.g);
   let hand=handHint(svg,690,170,'¡Toca la nube!');
   let n=0;const drops=[];ctx.status('drop',0,3);
@@ -1336,7 +1335,7 @@ function sceneSeed(sc,ctx){
   ctx.loop(dt=>{for(let i=drops.length-1;i>=0;i--){const d=drops[i];d.y+=d.vy*dt;const op=d.y>gy?Math.max(0,1-(d.y-gy)/110):1;
     d.el.setAttribute('transform',`translate(${d.x},${d.y}) scale(1.25)`);d.el.setAttribute('opacity',op);if(op<=0){d.el.remove();drops.splice(i,1);}}});
   cl.g.addEventListener('pointerdown',()=>{
-    if(n>=3)return;n++;ctx.status('drop',n,3);restart(cl.g,'wiggle');sfx.drop();sfx.rain();if(n>=3)halo.remove();
+    if(n>=3)return;n++;ctx.status('drop',n,3);restart(cl.g,'wiggle');sfx.drop();sfx.rain();if(n>=3){drip.remove();cw.classList.remove('breathe');}
     if(hand){hand.remove();hand=null;}
     for(let i=0;i<20;i++)drops.push({el:el('path',{d:DROP,fill:'#5DB8F5',stroke:'#2D8FDB','stroke-width':.8},dropG),x:rand(400,610),y:rand(140,180)-i*14,vy:rand(380,480)});
     const r0=+wet.getAttribute('rx'),ry0=+wet.getAttribute('ry'),tr=40+n*30,tr2=28+n*18;
@@ -1935,8 +1934,8 @@ function go(i){
   $('next').classList.toggle('ready',current.completed);
   if(i===slides.length-1)lab($('next'),'replay','Otra vez');else lab($('next'),'arrowR','Siguiente',true);
   const ctxNow=current;let touched=false;$('scene').addEventListener('pointerdown',()=>{touched=true;},{once:true,capture:true});
-  $('exBtn').hidden=!MISION[s.build.name];
-  const demo=()=>{if(current!==ctxNow||touched||!SET.demo||!MISION[s.build.name]||ctxNow.completed||exSeen.has(s.build.name)||!$('setModal').hidden)return;openExample();};
+  $('exBtn').hidden=!MISION[s.build.name]||!SET.demo;
+  const demo=()=>{};
   if(started)setTimeout(()=>{if(idx!==i)return;if(soundOn)speak(s.title+'. '+s.text,()=>ctxNow.after(400,demo));else ctxNow.after(2200,demo);},350);
 }
 function missionDone(m){m.classList.add('ok');const mi=m.querySelector('.mi');mi.innerHTML='';mi.append(icon('star',30));m.querySelector('.mt').innerHTML='<small>¡Misión cumplida!</small>Pulsa «Siguiente»';}
@@ -1957,6 +1956,14 @@ function showDemo(ctx,ms){const sc=$('scene');const b=h('div',{class:'demobar',r
   h('span',{class:'dt'},b,'<small>Mira cómo se hace</small>'+(ms?ms[1]:'¡Fíjate en la mano!'));ctx.hint();
   ctx.after(3600,()=>{b.classList.add('now');b.querySelector('.dt').innerHTML='<small>Ahora tú</small>¡Pruébalo!';ic.innerHTML='';ic.append(icon('hand',30));});
   ctx.after(6200,()=>{b.classList.add('bye');ctx.after(400,()=>b.remove());});}
+/* El panel de la izquierda se ajusta solo para que todo quepa sin desplazarse */
+let fitRaf=0;
+function fitPanel(){fitRaf=0;const p=document.querySelector('.panel');if(!p||!document.body.classList.contains('playing'))return;
+  p.style.zoom='';if(p.scrollHeight<=p.clientHeight+1)return;let z=1;
+  for(let k=0;k<16&&p.scrollHeight>p.clientHeight+1&&z>.5;k++){z=Math.max(.5,z*Math.min(.97,Math.max(.85,p.clientHeight/p.scrollHeight+.02)));p.style.zoom=z;}}
+const reqFit=()=>{if(!fitRaf)fitRaf=requestAnimationFrame(fitPanel);};
+addEventListener('resize',reqFit);
+new MutationObserver(reqFit).observe(document.querySelector('.panel'),{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['hidden']});
 function sayWord(w,b){stopSpeech();const was=soundOn;soundOn=true;speak(w);soundOn=was;if(b){b.classList.remove('saying');void b.offsetWidth;b.classList.add('saying');}}
 function play(){document.body.classList.add('playing');window.scrollTo(0,0);started=true;ac();go(0);}
 function home(){if(current){current.timers.forEach(clearTimeout);current.loops.length=0;}stopSpeech();document.body.classList.remove('playing');}
@@ -1964,7 +1971,7 @@ $('prev').onclick=()=>{sfx.tap();go(idx-1);};
 $('next').onclick=()=>{started=true;ac();sfx.tap();const to=idx===slides.length-1?1:idx+1;
   if(SET.focus&&current&&current.completed&&idx>0&&idx<slides.length-1&&++sincePause>=2){sincePause=0;stopSpeech();movementPause(()=>go(to));}else go(to);};
 $('listen').onclick=()=>{started=true;ac();const s=slides[idx];speak(s.title+'. '+s.text);};
-function applySet(){document.body.classList.toggle('bigtext',!!SET.big);document.body.classList.toggle('hc',!!SET.hc);document.body.classList.toggle('calm',!!(SET.calm||SET.focus));document.body.classList.toggle('focus',!!SET.focus);soundOn=!!SET.voice;
+function applySet(){try{$('exBtn').hidden=!MISION[slides[idx].build.name]||!SET.demo;}catch(e){}requestAnimationFrame(fitPanel);document.body.classList.toggle('bigtext',!!SET.big);document.body.classList.toggle('hc',!!SET.hc);document.body.classList.toggle('calm',!!(SET.calm||SET.focus));document.body.classList.toggle('focus',!!SET.focus);soundOn=!!SET.voice;
   const sb=$('soundBtn');sb.innerHTML='';sb.append(icon(soundOn?'speaker':'speakerOff',30));sb.setAttribute('aria-pressed',soundOn);const fb=$('fxBtn');fb.innerHTML='';fb.append(icon(fxOn()?'note':'noteOff',30));fb.setAttribute('aria-pressed',fxOn());
   document.querySelectorAll('.seg').forEach(g=>g.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(!!SET[g.dataset.k]===(b.dataset.v==='1')))));
   try{localStorage.setItem('semiAjustes',JSON.stringify(SET));}catch(e){}}
