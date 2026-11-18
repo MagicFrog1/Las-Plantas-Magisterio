@@ -413,6 +413,10 @@ footer.ctrl{display:flex;justify-content:space-between;align-items:center;gap:10
 .seg button{border:none;border-radius:18px;background:#F6F2F7;padding:6px 10px 5px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:'Baloo 2',system-ui,sans-serif;font-weight:700;font-size:16px;color:#5B3A2E;cursor:pointer;min-width:86px;box-shadow:0 4px 0 #E6DDE9}
 .seg button svg{width:38px;height:38px}
 .seg button[aria-pressed="true"]{background:#FFE07A;box-shadow:0 4px 0 #E0B000}
+.haloP{animation:haloP 1.5s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes haloP{50%{transform:scale(1.07);opacity:.7}}
+body.calm .haloP{animation:none}
+.picto.saying{animation:pictoSay .5s cubic-bezier(.3,1.6,.5,1)}@keyframes pictoSay{40%{transform:scale(1.12) rotate(-4deg)}}
 .twinkle{animation:tw 2.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 @keyframes tw{0%,100%{opacity:.25;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
 .cf.petal{border-radius:0 100% 0 100%;background:#FFB3CB!important}
@@ -493,7 +497,7 @@ body.focus .scene>svg{filter:saturate(.9)}
 .pring b{display:grid;place-items:center;width:66px;height:66px;border-radius:50%;background:#fff;font-family:'Baloo 2',system-ui,sans-serif;font-size:30px;color:#1E5A36}
 @media (max-width:700px){.mision{font-size:16px;padding:4px 14px 4px 4px}.mision .mi{width:34px;height:34px}.mision .mi svg{width:24px!important;height:24px!important}.mision small{font-size:11px}}
 @media (max-height:500px) and (orientation:landscape){.mision{font-size:14px;padding:3px 10px 3px 3px;border-width:2px}.mision .mi{width:28px;height:28px}.mision .mi svg{width:20px!important;height:20px!important}.mision small{font-size:10px}}
-body.talking .nav,body.talking .dot,body.talking .listen,body.talking .help,body.talking .picto,body.talking .wbtn,body.talking .bigstart,body.talking .card{pointer-events:none;opacity:.45;filter:saturate(.5);animation:none}
+body.talking .nav,body.talking .dot,body.talking .listen,body.talking .help,body.talking .wbtn,body.talking .bigstart,body.talking .card{pointer-events:none;opacity:.45;filter:saturate(.5);animation:none}
 .talk{display:none;align-items:center;gap:10px;font-family:'Baloo 2',system-ui,sans-serif;font-weight:700;font-size:18px;color:#8C2F55;background:#FFE3EC;border-radius:999px;padding:6px 16px 4px 12px;width:max-content}
 body.talking .talk{display:inline-flex}
 .talk i{display:inline-block;width:5px;height:18px;border-radius:3px;background:#FF7FA8;animation:eq .8s ease-in-out infinite}
@@ -1312,12 +1316,18 @@ function sceneIntro(sc,ctx){
 
 /* 1 · La semilla y la lluvia */
 function sceneSeed(sc,ctx){
-  const svg=newSvg(sc);const gy=280;scenery(svg,{gy,cut:true,sun:false});
+  const svg=newSvg(sc);const gy=280;scenery(svg,{gy,cut:true,sun:false,clouds:false});
+  [[70,70,.7,'drift1'],[820,58,.6,'drift2']].forEach(([x,y,k,c])=>cloudShape(svg,x,y,k,c).g.parentNode.setAttribute('opacity',.75));
   const wet=el('ellipse',{cx:500,cy:440,rx:10,ry:8,fill:'#2F5F8A',opacity:0},svg);
   const sprout=el('g',{},svg);
   const seed=drawSemi(svg,500,430,1.9,'sleep',{sprout:false});
   const zz=el('g',{transform:'translate(552,378)','pointer-events':'none'},svg);const zt=el('text',{class:'zzz','font-size':32,'font-weight':800,fill:'#fff'},zz);zt.textContent='Z z z';
   const dropG=el('g',{},svg);
+  const halo=el('g',{'pointer-events':'none'},svg);const hg=el('radialGradient',{id:'gHalo'},el('defs',{},halo));
+  el('stop',{offset:'0','stop-color':'#FFF3A0','stop-opacity':1},hg);el('stop',{offset:'.75','stop-color':'#FFD84A','stop-opacity':.85},hg);el('stop',{offset:'1','stop-color':'#FFE066','stop-opacity':0},hg);
+  const hp=el('g',{class:'haloP'},halo);el('ellipse',{cx:497,cy:118,rx:190,ry:105,fill:'url(#gHalo)'},hp);
+  el('ellipse',{cx:497,cy:118,rx:172,ry:92,fill:'none',stroke:'#FFB000','stroke-width':9,'stroke-dasharray':'2 18','stroke-linecap':'round'},hp);
+  [[318,70],[676,64],[350,178],[650,176],[497,10]].forEach(([x,y],i)=>{const t=el('path',{d:'M0,-14 L4,-4 L14,0 L4,4 L0,14 L-4,4 L-14,0 L-4,-4Z',fill:'#FFB000',stroke:'#fff','stroke-width':2,transform:`translate(${x},${y}) scale(1.5)`},halo);t.classList.add('twinkle');t.style.animationDelay=(i*.35)+'s';});
   const cl=cloudShape(svg,410,100,1.5);cl.g.classList.add('tappable');
   el('rect',{x:-40,y:-70,width:200,height:120,fill:'transparent'},cl.g);
   let hand=handHint(svg,690,170,'¡Toca la nube!');
@@ -1326,7 +1336,7 @@ function sceneSeed(sc,ctx){
   ctx.loop(dt=>{for(let i=drops.length-1;i>=0;i--){const d=drops[i];d.y+=d.vy*dt;const op=d.y>gy?Math.max(0,1-(d.y-gy)/110):1;
     d.el.setAttribute('transform',`translate(${d.x},${d.y}) scale(1.25)`);d.el.setAttribute('opacity',op);if(op<=0){d.el.remove();drops.splice(i,1);}}});
   cl.g.addEventListener('pointerdown',()=>{
-    if(n>=3)return;n++;ctx.status('drop',n,3);restart(cl.g,'wiggle');sfx.drop();sfx.rain();
+    if(n>=3)return;n++;ctx.status('drop',n,3);restart(cl.g,'wiggle');sfx.drop();sfx.rain();if(n>=3)halo.remove();
     if(hand){hand.remove();hand=null;}
     for(let i=0;i<20;i++)drops.push({el:el('path',{d:DROP,fill:'#5DB8F5',stroke:'#2D8FDB','stroke-width':.8},dropG),x:rand(400,610),y:rand(140,180)-i*14,vy:rand(380,480)});
     const r0=+wet.getAttribute('rx'),ry0=+wet.getAttribute('ry'),tr=40+n*30,tr2=28+n*18;
@@ -1914,7 +1924,7 @@ function go(i){
   picked=null;$('step').textContent=s.step;$('title').textContent=s.title;$('text').innerHTML=md(s.text);$('status').textContent='';$('say').hidden=true;
   const hw=HOW[s.how||'tap'];$('how').innerHTML='';const hi=h('span',{class:'hi'},$('how'));hi.append(icon(hw.i,32));h('span',{class:'ht'},$('how'),hw.t);
   preload((s.pictos||[]).map(x=>x[1]));
-  const pc=$('pictos');pc.innerHTML='';(s.pictos||[]).forEach(([ic,w])=>{const b=h('button',{class:'picto','aria-label':'Escuchar: '+w},pc);b.append(icon(ic,50));h('span',{},b).textContent=w;b.onclick=()=>{ac();sfx.tap();speak(w);};});
+  const pc=$('pictos');pc.innerHTML='';(s.pictos||[]).forEach(([ic,w])=>{const b=h('button',{class:'picto','aria-label':'Escuchar: '+w},pc);b.append(icon(ic,50));h('span',{},b).textContent=w;b.onclick=()=>{ac();sayWord(w,b);};});
   const sc=$('scene');sc.innerHTML='';restart(sc,'enter');
   current=makeCtx();current.slide=s;
   if(s.auto){current.completed=true;doneSet.add(i);}
@@ -1947,6 +1957,7 @@ function showDemo(ctx,ms){const sc=$('scene');const b=h('div',{class:'demobar',r
   h('span',{class:'dt'},b,'<small>Mira cómo se hace</small>'+(ms?ms[1]:'¡Fíjate en la mano!'));ctx.hint();
   ctx.after(3600,()=>{b.classList.add('now');b.querySelector('.dt').innerHTML='<small>Ahora tú</small>¡Pruébalo!';ic.innerHTML='';ic.append(icon('hand',30));});
   ctx.after(6200,()=>{b.classList.add('bye');ctx.after(400,()=>b.remove());});}
+function sayWord(w,b){stopSpeech();const was=soundOn;soundOn=true;speak(w);soundOn=was;if(b){b.classList.remove('saying');void b.offsetWidth;b.classList.add('saying');}}
 function play(){document.body.classList.add('playing');window.scrollTo(0,0);started=true;ac();go(0);}
 function home(){if(current){current.timers.forEach(clearTimeout);current.loops.length=0;}stopSpeech();document.body.classList.remove('playing');}
 $('prev').onclick=()=>{sfx.tap();go(idx-1);};
