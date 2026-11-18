@@ -443,6 +443,17 @@ body.hc .say .bub{background:#fff;border-color:#000}
 body.hc .nav,body.hc .listen,body.hc .help,body.hc .wbtn,body.hc .picto,body.hc .dot,body.hc .home,body.hc .icon-btn,body.hc .card,body.hc .how{outline:3px solid #000;outline-offset:0}
 body.hc .panel p b{background:#FFE000}
 body.calm *,body.calm *::before{animation:none!important;transition:none!important}
+.demobar{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px;max-width:calc(100% - 24px);background:#EAF6FF;border:3px solid #6BB8EA;border-radius:999px;padding:5px 20px 5px 5px;font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:21px;line-height:1.05;color:#1C4E73;box-shadow:0 5px 0 #4C9BD0;pointer-events:none;animation:rise .4s both}
+.demobar .di{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#fff}
+.demobar .di svg{width:30px!important;height:30px!important}
+.demobar small{display:block;font-size:13px;color:#3A82B5}
+.demobar.now{background:#E9F8E3;border-color:#5FB85A;box-shadow:0 5px 0 #3E9B4A;color:#1E5A36}.demobar.now small{color:#2F7D3B}
+.demobar.bye{opacity:0;transition:opacity .4s}
+.domghost{position:absolute;z-index:6;width:74px;height:88px;margin:-18px 0 0 -30px;pointer-events:none;animation:ghostTap 1.1s ease-in-out 2}
+.domghost svg{width:100%;height:100%;filter:drop-shadow(0 4px 6px rgba(0,0,0,.25))}
+@keyframes ghostTap{0%,100%{transform:translate(18px,26px)}45%{transform:translate(0,0)}55%{transform:translate(0,4px) scale(.94)}}
+@media (max-width:700px){.demobar{font-size:15px;top:8px;padding:3px 12px 3px 3px}.demobar .di{width:30px;height:30px}.demobar .di svg{width:22px!important;height:22px!important}.demobar small{font-size:11px}}
+@media (max-height:500px) and (orientation:landscape){.demobar{font-size:14px;top:6px;padding:2px 10px 2px 2px;border-width:2px}.demobar .di{width:26px;height:26px}.demobar .di svg{width:18px!important;height:18px!important}.demobar small{font-size:10px}}
 .mision{display:none;align-items:center;gap:10px;width:100%;background:#FFFBEA;border:3px solid #FFC83A;border-radius:999px;padding:6px 20px 6px 6px;font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:22px;line-height:1.05;color:#1E5A36;box-shadow:0 4px 0 #F0B400;border-radius:22px}
 body.focus .mision{display:flex}body.focus .mision[hidden]{display:none}body.focus .how{display:none}
 .mision .mi{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#FFF4C8}
@@ -662,7 +673,7 @@ body.talking .talk{display:inline-flex}
       </div>
       <div class="lx-three" data-rv>
         <div><span data-ic="eye"></span><h3>Ver y oír</h3><p>Voz que lee cada pantalla, pictogramas que suenan y palabras clave resaltadas.</p></div>
-        <div><span data-ic="hand"></span><h3>Hacer</h3><p>Un dibujo dice si hay que tocar, arrastrar o mover. Quien no pueda arrastrar, toca y coloca.</p></div>
+        <div><span data-ic="hand"></span><h3>Hacer</h3><p>Un dibujo dice si hay que tocar, arrastrar o mover, y una mano enseña un ejemplo de cómo se hace. Quien no pueda arrastrar, toca y coloca.</p></div>
         <div><span data-ic="heart"></span><h3>Motivarse</h3><p>Sin tiempo límite ni fallos que resten. El progreso se ve con dibujos que se llenan.</p></div>
       </div>
     </div>
@@ -737,6 +748,7 @@ body.talking .talk{display:inline-flex}
     <div class="opt"><div><h3>Velocidad de la voz</h3><p>Más despacio ayuda a entender mejor.</p></div><div class="seg" data-k="slow"><button data-v="0" data-i="rabbit">Normal</button><button data-v="1" data-i="turtle">Despacio</button></div></div>
     <div class="opt"><div><h3>Tamaño de la letra</h3><p>Textos más grandes en el panel.</p></div><div class="seg" data-k="big"><button data-v="0" data-i="textsize">Normal</button><button data-v="1" data-i="textsizeBig">Grande</button></div></div>
     <div class="opt"><div><h3>Más contraste</h3><p>Bordes y textos más marcados.</p></div><div class="seg" data-k="hc"><button data-v="0" data-i="contrastOff">No</button><button data-v="1" data-i="contrast">Sí</button></div></div>
+    <div class="opt"><div><h3>Ejemplo al empezar</h3><p>Autoinstrucción: al empezar cada actividad, una mano enseña cómo se hace antes de que lo prueben.</p></div><div class="seg" data-k="demo"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="hand">Sí</button></div></div>
     <div class="opt focusopt"><div><h3>Modo atención (TDAH)</h3><p>Una sola misión a la vista, menos movimiento y pausas cortas para moverse.</p></div><div class="seg" data-k="focus"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="bulb">Sí</button></div></div>
     <div class="opt"><div><h3>Menos movimiento</h3><p>Quita animaciones que puedan distraer.</p></div><div class="seg" data-k="calm"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="calm">Sí</button></div></div>
     <button class="btn big" id="setClose" style="margin-top:14px;width:100%">Listo</button>
@@ -771,7 +783,7 @@ function addGrain(box){const g=h('div',{class:'grain'},box);if(GRAIN)g.style.bac
    Sonido (WebAudio) y voz
    ========================================================= */
 let actx=null,soundOn=true,started=false,picked=null;
-const SET={voice:true,fx:true,slow:false,big:false,hc:false,calm:false,focus:false};
+const SET={voice:true,fx:true,slow:false,big:false,hc:false,calm:false,focus:false,demo:true};
 try{Object.assign(SET,JSON.parse(localStorage.getItem('semiAjustes')||'{}'));}catch(e){}
 function ac(){if(!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(actx&&actx.state==='suspended')actx.resume();return actx;}
 /* Efectos de sonido: sintetizados, suaves, con eco ligero. Se activan y desactivan aparte de la voz. */
@@ -1244,6 +1256,9 @@ const ICONS={
 };
 function icon(name,size=40){const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox','0 0 64 64');s.setAttribute('width',size);s.setAttribute('height',size);s.setAttribute('aria-hidden','true');s.setAttribute('focusable','false');(ICONS[name]||ICONS.star)(s);return s;}
 function ghostTap(ctx,svg,x,y){if(!svg)return;const g=el('g',{'pointer-events':'none'},svg);const o=el('g',{transform:`translate(${x},${y})`},g);el('circle',{r:34,fill:'none',stroke:'#FFC83A','stroke-width':6,class:'pulse'},o);const hi=el('g',{class:'bob'},o);drawHand(hi,0,4,.9);ctx.after(2800,()=>g.remove());}
+function domGhost(ctx,target){const sc=$('scene');if(!target||!sc.contains(target))return;const r=target.getBoundingClientRect(),R0=sc.getBoundingClientRect();
+  const d=h('div',{class:'domghost'},sc);d.style.left=(r.left-R0.left+r.width/2)+'px';d.style.top=(r.top-R0.top+r.height/2)+'px';
+  const sv=document.createElementNS(NS,'svg');sv.setAttribute('viewBox','-50 -10 100 120');drawHand(sv,0,0,1);d.append(sv);restart(target,'wiggle');ctx.after(2800,()=>d.remove());}
 function ghostMove(ctx,svg,a,b){if(!svg)return;const g=el('g',{'pointer-events':'none'},svg);const hd=drawHand(g,a.x,a.y,.9);let k=0;
   const run=()=>{tween(ctx,1.3,e=>hd.setAttribute('transform',`translate(${a.x+(b.x-a.x)*e},${a.y+(b.y-a.y)*e}) scale(.9)`),()=>{k++;if(k<2)ctx.after(350,run);else ctx.after(400,()=>g.remove());},t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2);};run();}
 
@@ -1479,7 +1494,7 @@ function sceneWeather(sc,ctx){
     b.onclick=()=>{({sol:()=>sfx.sparkle(0,6),lluvia:()=>sfx.rain(),nieve:()=>{sfx.chime();noise(.8,.04,0,{f0:5000,q:.3,att:.2});},calor:()=>noise(.6,.05,0,{f0:700,f1:300,q:.5})}[k]||sfx.tap)();apply(k,true);if(!tried.has(k)){tried.add(k);b.classList.add('tried');ctx.status('weather',tried.size,4);
       if(tried.size===4){ctx.markDone();}if(tried.size===4)ctx.after(6500,()=>ctx.done('¡Muy bien! A las plantas les gusta el sol y la lluvia. Cuando hace mucho frío o mucho calor, lo pasan mal.'));}};});
   apply('sol',false);ctx.status('weather',0,4);
-  ctx.hint=()=>{const k=Object.keys(ST).find(q=>!tried.has(q));if(k)restart(btns[k],'wiggle');};
+  ctx.hint=()=>{const k=Object.keys(ST).find(q=>!tried.has(q));if(k)domGhost(ctx,btns[k]);};
   const parts=[];let acc=0;
   ctx.loop(dt=>{acc+=dt;
     if(state==='lluvia'&&acc>.016){acc=0;for(let i=0;i<2;i++)parts.push({k:'r',el:el('line',{x1:0,y1:0,x2:-5,y2:22,stroke:'#E3F3FF','stroke-width':3,'stroke-linecap':'round',opacity:.85},fxG),x:rand(-40,1060),y:rand(-40,60),vy:rand(800,950),vx:-60});}
@@ -1793,7 +1808,7 @@ function sceneQuiz(sc,ctx){
     {e:'lollipop',n:'Chuches',ok:false,m:'¡Uy! Las chuches no son para las plantas.'},
     {e:'teddy',n:'Peluche',ok:false,m:'¡Qué gracioso! Las plantas no necesitan un peluche.'}]);
   const grid=h('div',{class:'cards'},wrap);let right=0;ctx.status('sprout',0,4);
-  ctx.hint=()=>{const c=cards.find(q=>q.ok&&!q.chosen);if(c&&c.el)restart(c.el,'wrong');};
+  ctx.hint=()=>{const c=cards.find(q=>q.ok&&!q.chosen);if(c&&c.el)domGhost(ctx,c.el);};
   cards.forEach(c=>{const d=h('div',{class:'card',role:'button',tabindex:0,'aria-label':c.n},grid,`<div class="emo"></div><div class="lbl">${c.n}</div>`);d.querySelector('.emo').append(icon(c.e,110));c.el=d;
     const act=()=>{if(c.ok){if(c.chosen)return;c.chosen=true;d.classList.add('right');right++;stage=right;drawStage();sfx.good();ctx.status('sprout',right,4);
         if(right<4)ctx.say(c.m);else{ctx.markDone();ctx.after(9000,()=>ctx.done('¡Perfecto! Las plantas necesitan sol, agua, aire y tierra. ¡Ya lo sabes todo!'));}if(right>=4)ctx.say(c.m,{onend:()=>ctx.done('¡Perfecto! Las plantas necesitan sol, agua, aire y tierra. ¡Ya lo sabes todo!')});}
@@ -1880,7 +1895,9 @@ function go(i){
   $('next').style.visibility=i===0?'hidden':'visible';
   $('next').classList.toggle('ready',current.completed);
   if(i===slides.length-1)lab($('next'),'replay','Otra vez');else lab($('next'),'arrowR','Siguiente',true);
-  if(started)setTimeout(()=>{if(idx===i)speak(s.title+'. '+s.text);},350);
+  const ctxNow=current;let touched=false;$('scene').addEventListener('pointerdown',()=>{touched=true;},{once:true,capture:true});
+  const demo=()=>{if(current!==ctxNow||touched||!SET.demo||!ctxNow.hint||ctxNow.completed||ctxNow._demoed)return;ctxNow._demoed=true;showDemo(ctxNow,MISION[s.build.name]);};
+  if(started)setTimeout(()=>{if(idx!==i)return;if(soundOn)speak(s.title+'. '+s.text,()=>ctxNow.after(400,demo));else ctxNow.after(2200,demo);},350);
 }
 function missionDone(m){m.classList.add('ok');const mi=m.querySelector('.mi');mi.innerHTML='';mi.append(icon('star',30));m.querySelector('.mt').innerHTML='<small>¡Misión cumplida!</small>Pulsa «Siguiente»';}
 /* Pausa de movimiento (modo atención): cada dos actividades terminadas */
@@ -1890,6 +1907,10 @@ function movementPause(then){const ov=h('div',{class:'pausa',role:'dialog','aria
   const P=PAUSAS[pauseCount++%PAUSAS.length];const ic=h('div',{class:'pic'},card);ic.append(icon(P[0],110));h('h2',{},card,'¡Pausa de movimiento!');h('p',{},card,P[1]);
   const ring=h('div',{class:'pring'},card);const n=h('b',{},ring,'12');const ok=h('button',{class:'btn big'},card,'¡Ya está!');sfx.chime();
   let left=12;const end=()=>{clearInterval(t);ov.remove();then();};const t=setInterval(()=>{left--;n.textContent=left;ring.style.setProperty('--p',(12-left)/12);if(left<=0)end();},1000);ok.onclick=()=>{sfx.tap();end();};}
+function showDemo(ctx,ms){const sc=$('scene');const b=h('div',{class:'demobar',role:'status'},sc);const ic=h('span',{class:'di'},b);ic.append(icon('eye',30));
+  h('span',{class:'dt'},b,'<small>Mira cómo se hace</small>'+(ms?ms[1]:'¡Fíjate en la mano!'));ctx.hint();
+  ctx.after(3600,()=>{b.classList.add('now');b.querySelector('.dt').innerHTML='<small>Ahora tú</small>¡Pruébalo!';ic.innerHTML='';ic.append(icon('hand',30));});
+  ctx.after(6200,()=>{b.classList.add('bye');ctx.after(400,()=>b.remove());});}
 function play(){document.body.classList.add('playing');window.scrollTo(0,0);started=true;ac();go(0);}
 function home(){if(current){current.timers.forEach(clearTimeout);current.loops.length=0;}stopSpeech();document.body.classList.remove('playing');}
 $('prev').onclick=()=>{sfx.tap();go(idx-1);};
