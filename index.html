@@ -443,6 +443,28 @@ body.hc .say .bub{background:#fff;border-color:#000}
 body.hc .nav,body.hc .listen,body.hc .help,body.hc .wbtn,body.hc .picto,body.hc .dot,body.hc .home,body.hc .icon-btn,body.hc .card,body.hc .how{outline:3px solid #000;outline-offset:0}
 body.hc .panel p b{background:#FFE000}
 body.calm *,body.calm *::before{animation:none!important;transition:none!important}
+.exbtn{border:none;background:#E3F4FF;color:#1C4E73;font-weight:800;font-size:18px;border-radius:999px;padding:8px 18px 8px 10px;cursor:pointer;box-shadow:0 4px 0 #A9D4F0;font-family:inherit;display:inline-flex;align-items:center;gap:8px}
+.exbtn svg{width:28px;height:28px}.exbtn:active{transform:translateY(3px);box-shadow:none}.exbtn[hidden]{display:none}
+body.talking .exbtn{pointer-events:none;opacity:.45;filter:saturate(.5)}
+.exmodal{place-items:center;z-index:70}
+.exsheet{margin:auto;background:#fff;border-radius:34px;padding:18px 20px 20px;width:min(860px,100%);box-shadow:0 24px 60px rgba(0,0,0,.25);border:6px solid #CBE8FB;animation:rise .35s both}
+.exhead{display:flex;align-items:center;gap:12px;margin:0 4px 12px}
+.exic{flex:none;display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#E3F4FF}.exic svg{width:40px;height:40px}
+.exhead small{display:block;font-family:'Baloo 2',system-ui,sans-serif;font-weight:700;font-size:17px;color:#3A82B5}
+.exhead h2{margin:0;font-size:30px;line-height:1.05;color:#1C4E73}
+.exvid{position:relative;border-radius:22px;overflow:hidden;background:#DDEFFA;aspect-ratio:940/680;width:min(100%,calc((100dvh - 230px)*940/680));margin:0 auto}
+.exvid video{display:block;width:100%;height:100%;object-fit:cover}
+.explay{position:absolute;inset:0;margin:auto;width:110px;height:110px;border-radius:50%;border:none;background:rgba(255,255,255,.92);box-shadow:0 8px 0 rgba(28,78,115,.25);cursor:pointer;display:grid;place-items:center}
+.explay::before{content:'';margin-left:10px;border-left:42px solid #3A82B5;border-top:26px solid transparent;border-bottom:26px solid transparent}
+.explay[hidden]{display:none}
+.exrow{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.exagain{border:none;background:#F6F2F7;color:#5B3A2E;font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:22px;border-radius:999px;padding:10px 24px 10px 14px;cursor:pointer;box-shadow:0 5px 0 #E6DDE9;display:inline-flex;align-items:center;gap:8px}
+.exagain svg{width:32px;height:32px}.exagain:active{transform:translateY(3px);box-shadow:none}
+.exgo{display:inline-flex;align-items:center;gap:8px}.exgo svg{width:32px;height:32px}
+.exgo.ready{animation:pulseBtn 1.2s ease-in-out infinite}
+body.calm .exgo.ready{animation:none}
+@media (max-width:700px){.exsheet{padding:12px;border-radius:24px;border-width:4px}.exhead h2{font-size:21px}.exic{width:44px;height:44px}.exic svg{width:30px;height:30px}.exhead small{font-size:14px}.explay{width:80px;height:80px}.exagain{font-size:18px}.exbtn{font-size:15px;padding:7px 14px 7px 8px}.exbtn svg{width:22px;height:22px}}
+@media (max-height:500px) and (orientation:landscape){.exsheet{width:min(640px,100%);padding:8px 12px;display:grid;grid-template-columns:auto 1fr;grid-template-areas:'v h' 'v r';gap:0 14px;align-items:center}.exhead{grid-area:h;flex-direction:column;align-items:flex-start}.exvid{grid-area:v;width:calc((100dvh - 60px)*940/680);max-width:62vw}.exrow{grid-area:r;flex-direction:column;align-items:stretch}.exgo{white-space:nowrap;font-size:20px!important;padding:10px 16px!important}.exhead{margin-bottom:6px}.exhead h2{font-size:19px}.exic{width:38px;height:38px}.exrow{margin-top:8px}.exagain{font-size:16px;padding:6px 16px 6px 10px}.exbtn{font-size:13px;padding:5px 11px 5px 6px}.exbtn svg{width:18px;height:18px}}
 .demobar{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:5;display:flex;align-items:center;gap:10px;max-width:calc(100% - 24px);background:#EAF6FF;border:3px solid #6BB8EA;border-radius:999px;padding:5px 20px 5px 5px;font-family:'Baloo 2',system-ui,sans-serif;font-weight:800;font-size:21px;line-height:1.05;color:#1C4E73;box-shadow:0 5px 0 #4C9BD0;pointer-events:none;animation:rise .4s both}
 .demobar .di{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#fff}
 .demobar .di svg{width:30px!important;height:30px!important}
@@ -673,7 +695,7 @@ body.talking .talk{display:inline-flex}
       </div>
       <div class="lx-three" data-rv>
         <div><span data-ic="eye"></span><h3>Ver y oír</h3><p>Voz que lee cada pantalla, pictogramas que suenan y palabras clave resaltadas.</p></div>
-        <div><span data-ic="hand"></span><h3>Hacer</h3><p>Un dibujo dice si hay que tocar, arrastrar o mover, y una mano enseña un ejemplo de cómo se hace. Quien no pueda arrastrar, toca y coloca.</p></div>
+        <div><span data-ic="hand"></span><h3>Hacer</h3><p>Un dibujo dice si hay que tocar, arrastrar o mover, y un vídeo corto enseña con un ejemplo cómo se hace. Quien no pueda arrastrar, toca y coloca.</p></div>
         <div><span data-ic="heart"></span><h3>Motivarse</h3><p>Sin tiempo límite ni fallos que resten. El progreso se ve con dibujos que se llenan.</p></div>
       </div>
     </div>
@@ -727,7 +749,7 @@ body.talking .talk{display:inline-flex}
       <h1 id="title"></h1>
       <p id="text"></p>
       <div class="pictos" id="pictos"></div>
-      <div class="row"><button class="listen" id="listen">Escuchar</button><button class="help" id="helpBtn">Ayuda</button></div>
+      <div class="row"><button class="listen" id="listen">Escuchar</button><button class="help" id="helpBtn">Ayuda</button><button class="exbtn" id="exBtn">Ver ejemplo</button></div>
       <div class="talk" id="talk" role="status"><span><i></i> <i></i> <i></i></span>Escucha a Semi…</div>
       <div class="status" id="status"></div>
       <div class="say" id="say" hidden><div class="av" id="sayAv"></div><div class="bub" id="sayTxt"></div></div>
@@ -748,10 +770,17 @@ body.talking .talk{display:inline-flex}
     <div class="opt"><div><h3>Velocidad de la voz</h3><p>Más despacio ayuda a entender mejor.</p></div><div class="seg" data-k="slow"><button data-v="0" data-i="rabbit">Normal</button><button data-v="1" data-i="turtle">Despacio</button></div></div>
     <div class="opt"><div><h3>Tamaño de la letra</h3><p>Textos más grandes en el panel.</p></div><div class="seg" data-k="big"><button data-v="0" data-i="textsize">Normal</button><button data-v="1" data-i="textsizeBig">Grande</button></div></div>
     <div class="opt"><div><h3>Más contraste</h3><p>Bordes y textos más marcados.</p></div><div class="seg" data-k="hc"><button data-v="0" data-i="contrastOff">No</button><button data-v="1" data-i="contrast">Sí</button></div></div>
-    <div class="opt"><div><h3>Ejemplo al empezar</h3><p>Autoinstrucción: al empezar cada actividad, una mano enseña cómo se hace antes de que lo prueben.</p></div><div class="seg" data-k="demo"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="hand">Sí</button></div></div>
+    <div class="opt"><div><h3>Vídeo de ejemplo al empezar</h3><p>Autoinstrucción: antes de cada actividad sale un vídeo corto que enseña paso a paso cómo se hace. Siempre se puede volver a ver con «Ver ejemplo».</p></div><div class="seg" data-k="demo"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="eye">Sí</button></div></div>
     <div class="opt focusopt"><div><h3>Modo atención (TDAH)</h3><p>Una sola misión a la vista, menos movimiento y pausas cortas para moverse.</p></div><div class="seg" data-k="focus"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="bulb">Sí</button></div></div>
     <div class="opt"><div><h3>Menos movimiento</h3><p>Quita animaciones que puedan distraer.</p></div><div class="seg" data-k="calm"><button data-v="0" data-i="sparkle">No</button><button data-v="1" data-i="calm">Sí</button></div></div>
     <button class="btn big" id="setClose" style="margin-top:14px;width:100%">Listo</button>
+  </div>
+</div>
+<div class="modal exmodal" id="exModal" hidden role="dialog" aria-modal="true" aria-labelledby="exTitle">
+  <div class="exsheet">
+    <div class="exhead"><span class="exic" id="exIc"></span><div><small>Mira cómo se hace</small><h2 id="exTitle"></h2></div></div>
+    <div class="exvid"><video id="exVid" playsinline preload="auto" aria-describedby="exTitle"></video><button class="explay" id="exPlay" aria-label="Ver el vídeo"></button></div>
+    <div class="exrow"><button class="exagain" id="exAgain">Otra vez</button><button class="btn big exgo" id="exGo">¡Ahora yo!</button></div>
   </div>
 </div>
 <div id="fx"></div>
@@ -1138,7 +1167,7 @@ function makeBee(p,s=1){
   const pollen=el('g',{opacity:0},b);[[-10,24],[4,26],[-20,19],[15,21]].forEach(([x,y])=>el('circle',{cx:x,cy:y,r:5,fill:'#FFB627',stroke:'#E08E00','stroke-width':1.5},pollen));
   return{o,pollen,place(x,y,dir=1,tilt=0){o.setAttribute('transform',`translate(${x},${y}) rotate(${tilt})`);flip.setAttribute('transform',`scale(${dir},1)`);}};
 }
-function handHint(p,x,y,label){const o=el('g',{transform:`translate(${x},${y})`,'pointer-events':'none'},p);const i=el('g',{class:'bob'},o);
+function handHint(p,x,y,label){const o=el('g',{class:'hhint',transform:`translate(${x},${y})`,'pointer-events':'none'},p);const i=el('g',{class:'bob'},o);
   if(label){const w=label.length*11+40;el('rect',{x:-w/2,y:-92,width:w,height:40,rx:20,fill:'#fff',filter:'url(#soft)'},i);const t=el('text',{x:0,y:-64,'text-anchor':'middle','font-size':21,'font-weight':700,fill:'#1E5A36'},i);t.textContent=label;}
   drawHand(i,0,-34,.85);return o;}
 function bubble(p,x,y,text,tail='bl'){const o=el('g',{transform:`translate(${x},${y})`,'pointer-events':'none'},p);const i=el('g',{class:'popin'},o);const w=Math.max(120,text.length*16+40);
@@ -1896,7 +1925,8 @@ function go(i){
   $('next').classList.toggle('ready',current.completed);
   if(i===slides.length-1)lab($('next'),'replay','Otra vez');else lab($('next'),'arrowR','Siguiente',true);
   const ctxNow=current;let touched=false;$('scene').addEventListener('pointerdown',()=>{touched=true;},{once:true,capture:true});
-  const demo=()=>{if(current!==ctxNow||touched||!SET.demo||!ctxNow.hint||ctxNow.completed||ctxNow._demoed)return;ctxNow._demoed=true;showDemo(ctxNow,MISION[s.build.name]);};
+  $('exBtn').hidden=!MISION[s.build.name];
+  const demo=()=>{if(current!==ctxNow||touched||!SET.demo||!MISION[s.build.name]||ctxNow.completed||exSeen.has(s.build.name)||!$('setModal').hidden)return;openExample();};
   if(started)setTimeout(()=>{if(idx!==i)return;if(soundOn)speak(s.title+'. '+s.text,()=>ctxNow.after(400,demo));else ctxNow.after(2200,demo);},350);
 }
 function missionDone(m){m.classList.add('ok');const mi=m.querySelector('.mi');mi.innerHTML='';mi.append(icon('star',30));m.querySelector('.mt').innerHTML='<small>¡Misión cumplida!</small>Pulsa «Siguiente»';}
@@ -1907,6 +1937,12 @@ function movementPause(then){const ov=h('div',{class:'pausa',role:'dialog','aria
   const P=PAUSAS[pauseCount++%PAUSAS.length];const ic=h('div',{class:'pic'},card);ic.append(icon(P[0],110));h('h2',{},card,'¡Pausa de movimiento!');h('p',{},card,P[1]);
   const ring=h('div',{class:'pring'},card);const n=h('b',{},ring,'12');const ok=h('button',{class:'btn big'},card,'¡Ya está!');sfx.chime();
   let left=12;const end=()=>{clearInterval(t);ov.remove();then();};const t=setInterval(()=>{left--;n.textContent=left;ring.style.setProperty('--p',(12-left)/12);if(left<=0)end();},1000);ok.onclick=()=>{sfx.tap();end();};}
+const exSeen=new Set();let exBack=null;
+function openExample(){const s=slides[idx],k=s.build.name,ms=MISION[k];if(!ms)return;exSeen.add(k);stopSpeech();exBack=document.activeElement;
+  const v=$('exVid');$('exTitle').textContent=ms[1];const ic=$('exIc');ic.innerHTML='';ic.append(icon(ms[0],40));
+  $('exGo').classList.remove('ready');$('exModal').hidden=false;v.muted=!SET.fx;if(v.dataset.k!==k){v.src='video/'+k+'.mp4';v.dataset.k=k;}v.currentTime=0;
+  const pr=v.play();$('exPlay').hidden=true;if(pr&&pr.catch)pr.catch(()=>{$('exPlay').hidden=false;});$('exGo').focus({preventScroll:true});}
+function closeExample(){const v=$('exVid');v.pause();$('exModal').hidden=true;if(exBack&&exBack.focus)exBack.focus({preventScroll:true});}
 function showDemo(ctx,ms){const sc=$('scene');const b=h('div',{class:'demobar',role:'status'},sc);const ic=h('span',{class:'di'},b);ic.append(icon('eye',30));
   h('span',{class:'dt'},b,'<small>Mira cómo se hace</small>'+(ms?ms[1]:'¡Fíjate en la mano!'));ctx.hint();
   ctx.after(3600,()=>{b.classList.add('now');b.querySelector('.dt').innerHTML='<small>Ahora tú</small>¡Pruébalo!';ic.innerHTML='';ic.append(icon('hand',30));});
@@ -1929,6 +1965,14 @@ $('setBtn').onclick=()=>{$('setModal').hidden=false;$('setClose').focus();};
 $('setClose').onclick=()=>{$('setModal').hidden=true;$('setBtn').focus();};
 $('setModal').addEventListener('click',e=>{if(e.target.id==='setModal')$('setModal').hidden=true;});
 lab($('listen'),'speaker','Escuchar');lab($('helpBtn'),'bulb','Ayuda');lab($('prev'),'arrowL','Atrás');
+lab($('exBtn'),'eye','Ver ejemplo');lab($('exAgain'),'replay','Otra vez');lab($('exGo'),'hand','¡Ahora yo!');
+$('exBtn').onclick=()=>{ac();sfx.tap();openExample();};
+$('exVid').addEventListener('ended',()=>{$('exGo').classList.add('ready');sfx.chime();});
+$('exPlay').onclick=()=>{const v=$('exVid');v.play();$('exPlay').hidden=true;};
+$('exVid').addEventListener('click',()=>{const v=$('exVid');if(v.paused){v.play();$('exPlay').hidden=true;}else{v.pause();$('exPlay').hidden=false;}});
+$('exAgain').onclick=()=>{sfx.tap();const v=$('exVid');v.currentTime=0;v.play();$('exPlay').hidden=true;$('exGo').classList.remove('ready');};
+$('exGo').onclick=()=>{sfx.pop();closeExample();};
+$('exModal').addEventListener('click',e=>{if(e.target.id==='exModal')closeExample();});
 $('helpBtn').onclick=()=>{ac();if(current&&current.hint&&!current.completed){current.say('¡Mira la mano! Yo te ayudo.');current.hint();}else{const s=slides[idx];speak(s.title+'. '+s.text);}};
 document.querySelectorAll('[data-icon]').forEach(d=>d.append(icon(d.dataset.icon,64)));
 applySet();
@@ -1936,7 +1980,7 @@ $('homeBtn').onclick=home;
 try{if(localStorage.getItem('semiNoRot'))document.body.classList.add('norot');}catch(e){}
 $('rotHint').onclick=()=>{document.body.classList.add('norot');try{localStorage.setItem('semiNoRot','1');}catch(e){}};
 addEventListener('orientationchange',()=>{if(matchMedia('(orientation:landscape)').matches)document.body.classList.add('norot');});
-document.addEventListener('keydown',e=>{if(!document.body.classList.contains('playing'))return;if(e.key==='ArrowRight')$('next').click();if(e.key==='ArrowLeft'&&idx>0)$('prev').click();if(e.key==='Escape'){if(!$('setModal').hidden)$('setModal').hidden=true;else home();}});
+document.addEventListener('keydown',e=>{if(!document.body.classList.contains('playing'))return;if(e.key==='ArrowRight')$('next').click();if(e.key==='ArrowLeft'&&idx>0)$('prev').click();if(e.key==='Escape'){if(!$('exModal').hidden)closeExample();else if(!$('setModal').hidden)$('setModal').hidden=true;else home();}});
 document.querySelectorAll('[data-start]').forEach(b=>b.addEventListener('click',play));
 $('sayAv').appendChild(semiIcon(54,'happy'));
 $('homeBtn').prepend(semiIcon(26,'happy'));
